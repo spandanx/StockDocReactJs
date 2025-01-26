@@ -162,7 +162,7 @@ const StockList = ({stockTokenGlobal}) => {
               {Object.entries(stock_col_native_mapping).map((row_, i_) => (
                 <td>{stockItem[row_[1]]}</td>
               ))}
-              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]}/></td>
+              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal}/></td>
             </tr>
             ))}
           </tbody>

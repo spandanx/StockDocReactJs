@@ -10,7 +10,7 @@ import { IoRefreshSharp } from "react-icons/io5";
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const ChartScreenDynamic = ({stock_name, stock_id}) => {
+const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
 
 
   const [stockStockPromptScreenX, setStockStockPromptScreenX] = useState(100);
@@ -54,6 +54,7 @@ const ChartScreenDynamic = ({stock_name, stock_id}) => {
   useEffect(() => {
     // getStockList();
     console.log("Initiated");
+    getChartData();
   }, []);
 
   const convertDataToChart = (chart_data_raw) => {
@@ -67,15 +68,15 @@ const ChartScreenDynamic = ({stock_name, stock_id}) => {
           label:'buy_qty',
           backgroundColor: 'palegreen',
           borderColor: 'olivedrab',
-          data:chart_data_raw.map((stHist)=>stHist.high),
+          data:chart_data_raw.map((stHist)=>stHist.close),
         },
-        {
-          id:"B",
-          label:'sell_qty',
-          backgroundColor: 'darkred',
-          borderColor: 'firebrick',
-          data:chart_data_raw.map((stHist)=>stHist.low),
-        },
+        // {
+        //   id:"B",
+        //   label:'sell_qty',
+        //   backgroundColor: 'darkred',
+        //   borderColor: 'firebrick',
+        //   data:chart_data_raw.map((stHist)=>stHist.low),
+        // },
 
       ]
     }
@@ -92,7 +93,10 @@ const ChartScreenDynamic = ({stock_name, stock_id}) => {
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
-    fetch(queryUrl)
+    fetch(queryUrl, {
+      method: 'get',
+      headers: {'stock_authorization': stockTokenGlobal}
+    })
         .then(response => response.json())
         .then(stocks => {
           // setStocks(stocks);
