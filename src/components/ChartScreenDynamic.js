@@ -10,7 +10,7 @@ import { IoRefreshSharp } from "react-icons/io5";
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const ChartScreen = (props) => {
+const ChartScreenDynamic = ({stock_name, stock_id}) => {
 
 
   const [stockStockPromptScreenX, setStockStockPromptScreenX] = useState(100);
@@ -55,56 +55,7 @@ const ChartScreen = (props) => {
     // getStockList();
     console.log("Initiated");
   }, []);
-  // const getChartSize = Math.ceil(12/(props.type.split(',')).length);
 
-  // const chart_data_raw = [
-  //   {
-  //       "timestamp": "2024-05-01T00:00:00+05:30",
-  //       "open": 97.45,
-  //       "high": 110.45,
-  //       "low": 90.4,
-  //       "close": 107.25,
-  //       "volume": 2774901941,
-  //       "open_interest": 0
-  //   },
-  //   {
-  //       "timestamp": "2024-04-01T00:00:00+05:30",
-  //       "open": 90.65,
-  //       "high": 96.7,
-  //       "low": 86.85,
-  //       "close": 96.2,
-  //       "volume": 1192263416,
-  //       "open_interest": 0
-  //   },
-  //   {
-  //       "timestamp": "2024-03-01T00:00:00+05:30",
-  //       "open": 89,
-  //       "high": 95.5,
-  //       "low": 73.6,
-  //       "close": 89.7,
-  //       "volume": 1783019663,
-  //       "open_interest": 0
-  //   }];
-  // var chartData = 
-  // {
-  //   labels: chart_data_raw.map((stHist)=>(stHist.timestamp.split("T"))),
-  //   datasets: [
-  //     {
-  //       id:"A",
-  //       label:'buy_qty',
-  //       backgroundColor: 'palegreen',
-  //       borderColor: 'olivedrab',
-  //       data:chart_data_raw.map((stHist)=>stHist.high),
-  //     },
-  //     {
-  //       id:"B",
-  //       label:'sell_sty',
-  //       backgroundColor: 'darkred',
-  //       borderColor: 'firebrick',
-  //       data:chart_data_raw.map((stHist)=>stHist.low),
-  //     }
-  //   ]
-  // }
   const convertDataToChart = (chart_data_raw) => {
     console.log("Converting Stocks");
     var chartData = 
@@ -133,11 +84,11 @@ const ChartScreen = (props) => {
 
   }
 
-  const getStockList = () => {
+  const getChartData = () => {
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:"1276417", frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
+    let queryParams = {stock_id:stock_id, frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
@@ -154,13 +105,6 @@ const ChartScreen = (props) => {
         });
   }
 
-  // const onClickSvg = e => {
-  //   const { farthestViewportElement: svgRoot } = e.target;
-  //   const dim = svgRoot.getBoundingClientRect();
-  //   const x = e.clientX - dim.left;
-  //   const y = e.clientY - dim.top;
-  //   console.log(`x: ${x}, y: ${y}`);
-  // };
   function clicked2(evnt, stock_price_multiple_0_05){
     // console.log(evnt);
     console.log("function inline_click called");
@@ -200,34 +144,16 @@ const ChartScreen = (props) => {
       <div class="row">
         {/* {console.log(getChartSize)} */}
         {/* chart.split(':')[1] */}
-        STOCK REFRESH
-        <IoRefreshSharp onClick={(event) => getStockList(event)}/>
+        <IoRefreshSharp onClick={(event) => getChartData(event)}/>
         {(Object.keys(stockData).length>0)? 
         <Chart type='line' data={stockData} 
-        // onClick={(event)=>{console.log("Clicked"); console.log(event);}}
-        // onClick={(event)=>clicked(event)}
-        // onClick={(event) => {
-        //   console.log(event);
-        //   // console.log(event.view.screen);
-        //   console.log(event.pageX, event.clientX, event.screenX);
-        //   // console.log(event);
-        //   console.log(event.pageY, event.clientY, event.screenY);
-        //   // console.log(event.target.clientTop, event.target.clientHeight, event.target.clientLeft, event.target.width, event.target.height);
-        //   console.log(event.target.offsetHeight, event.target.offsetLeft, event.target.offsetTop, event.target.offsetWidth);
-        //   // console.log("outerHeight", event.view.outerHeight);
-        //   // console.log("outerWidth", event.view.outerWidth);
-        //   // console.log("innerHeight", event.view.innerHeight);
-        //   // console.log("innerWidth", event.view.innerWidth);
-        //   // console.log("offsetY", event.nativeEvent.offsetY);
-        //   console.log("offsetX", event.nativeEvent.offsetX);
-        //   }
-        // }
+
         options={{
           onClick: (e) => clicked2(e, true),
           plugins: {
             title: {
               display: true,
-              text: "custom"
+              text: stock_name
             }
           }
         }}
@@ -244,4 +170,4 @@ const ChartScreen = (props) => {
   )
 }
 
-export default ChartScreen;
+export default ChartScreenDynamic;

@@ -1,0 +1,9 @@
+.stockcustom {
+    transition: height .4s ease;
+    height: 0;
+    overflow: hidden;
+  }
+  
+  .stockcustom.show {
+    height: 150vh;
+  }
