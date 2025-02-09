@@ -22,12 +22,48 @@ const ChartScreen = (props) => {
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     datasets: [{
       label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
+      data: [
+        {
+            labels: ["Red", "Blue", "Yellow"],
+        },
+        {
+            x: "Red",
+            y: 7
+        },
+        {
+            x: "Blue",
+            y: 3
+        },
+        {
+          x: "Yellow",
+          y: 8
+        }
+      ],
       borderColor: 'pink'
     },
     {
       label: '# of Votes',
-      data: [6, 6, 6, 6, 6, 6],
+      data: [
+        {
+            labels: ["Yellow", "Green", "Purple", "Orange"],
+        },
+        {
+            x: "Yellow",
+            y: 7
+        },
+        {
+            x: "Green",
+            y: 10
+        },
+        {
+            x: "Purple",
+            y: 2
+        },
+        {
+            x: "Orange",
+            y: 6
+        }
+      ],
       borderColor: 'blue'
     }
   ]

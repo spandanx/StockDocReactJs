@@ -7,7 +7,9 @@ import { Chart } from 'react-chartjs-2';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/StockList.css'
 import { IoRefreshSharp } from "react-icons/io5";
+import { RiShareForwardFill } from "react-icons/ri";
 import ChartScreenDynamic from "./ChartScreenDynamic"
+import { useNavigate } from 'react-router-dom';
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
@@ -58,6 +60,8 @@ const StockList = ({stockTokenGlobal}) => {
       "total_price": 3517.44
   }
   ]);
+
+  const navigate = useNavigate();
 
   const baseUrl = "http://127.0.0.1:8000";
 
@@ -144,6 +148,13 @@ const StockList = ({stockTokenGlobal}) => {
         setActiveStockList(newStockData);
     }
   }
+  const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
+    console.log("Clicked navigate_to_stock_page");
+    console.log(stock_name, stock_id, stockTokenGlobal);
+    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal}});
+    // navigate('/dynamic-chart', {state:{id:"ABCBBCBCBC"}});
+    
+  }
 
     return (
       <div style={{"overflow-y": "scroll"}}>
@@ -163,6 +174,7 @@ const StockList = ({stockTokenGlobal}) => {
                 <td>{stockItem[row_[1]]}</td>
               ))}
               <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal}/></td>
+              <td><RiShareForwardFill onClick={(evnt)=>navigate_to_stock_page(stockItem["symbol"], stockItem["instrument_token"], stockTokenGlobal)}/></td>
             </tr>
             ))}
           </tbody>

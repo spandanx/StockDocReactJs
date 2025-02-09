@@ -17,6 +17,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import ChartScreenDynamic from './components/ChartScreenDynamic';
 
 
 function App() {
@@ -72,7 +73,7 @@ function App() {
             <Route path="/" element={<ChartScreen/>}/>
             <Route path="/chart" element={<ChartScreen/>}/>
             <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal}/>}/>
-            
+            <Route path="/dynamic-chart" element={<ChartScreenDynamic stock_name="IREDA" stock_id="139270660" stockTokenGlobal={stockTokenGlobal} />}/>
             {/* <Route path="/"/> */}
           </Routes>
         </div>

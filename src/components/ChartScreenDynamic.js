@@ -6,6 +6,7 @@ import 'chart.js/auto';
 import { Chart } from 'react-chartjs-2';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoRefreshSharp } from "react-icons/io5";
+import { useLocation } from 'react-router-dom';
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
@@ -17,6 +18,12 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
   const [stockStockPromptScreenY, setStockStockPromptScreenY] = useState(200);
 
   const [clickedStock, setClickedStock] = useState({});
+
+  const location = useLocation();
+
+  const [currentStockName, setCurrentStockName] = useState();
+  const [currentStockId, setCurrentStockId] = useState();
+  const [currentStockTokenGlobal, setCurrentStockTokenGlobal] = useState();
 
   const [stockData, setStockData] = useState({
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
@@ -53,7 +60,37 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
 
   useEffect(() => {
     // getStockList();
-    console.log("Initiated");
+    console.log("Initiated Dynmaic Stock Page");
+    console.log(stock_name, stock_id, stockTokenGlobal);
+    console.log("Location Data");
+    console.log("FROM UseState");
+    
+    // console.log(currentStockName, currentStockId, currentStockTokenGlobal);
+    
+    console.log(location);
+    // setCurrentStockName(location.state?.stock_name != null ? );
+    if (location.state != null){
+      console.log("Found FROM location");
+      if (location.state.stock_name != null){
+        setCurrentStockName(location.state.stock_name);
+      }
+      if (location.state.stock_id != null){
+        setCurrentStockId(location.state.stock_id);
+      }
+      if (location.state.stockTokenGlobal != null){
+        setCurrentStockTokenGlobal(location.state.stockTokenGlobal);
+      }
+      console.log("Location", currentStockName, currentStockId, currentStockTokenGlobal);
+    }
+    else{
+      console.log("Found from params");
+      setCurrentStockName(stock_name);
+      setCurrentStockId(stock_id);
+      setCurrentStockTokenGlobal(stockTokenGlobal);
+      console.log("Setting from params", stock_name, stock_id, stockTokenGlobal);
+      console.log("Params", currentStockName, currentStockId, currentStockTokenGlobal);
+    }
+    
     getChartData();
   }, []);
 
@@ -89,13 +126,13 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:stock_id, frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
+    let queryParams = {stock_id:currentStockId != undefined? currentStockId:stock_id, frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
     fetch(queryUrl, {
       method: 'get',
-      headers: {'stock_authorization': stockTokenGlobal}
+      headers: {'stock_authorization': (currentStockTokenGlobal != undefined? currentStockTokenGlobal: stockTokenGlobal)}
     })
         .then(response => response.json())
         .then(stocks => {
@@ -157,7 +194,7 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
           plugins: {
             title: {
               display: true,
-              text: stock_name
+              text: (currentStockName != undefined? currentStockName:stock_name)
             }
           }
         }}
