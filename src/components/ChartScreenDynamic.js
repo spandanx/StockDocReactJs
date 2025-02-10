@@ -6,7 +6,13 @@ import 'chart.js/auto';
 import { Chart } from 'react-chartjs-2';
 import 'react-toastify/dist/ReactToastify.css';
 import { IoRefreshSharp } from "react-icons/io5";
+import { RiSettings4Fill } from "react-icons/ri";
+import { MdRefresh } from "react-icons/md";
+
 import { useLocation } from 'react-router-dom';
+import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser } from '../common/Properties';
+
+import '../styles/PredictionSelection.css'
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
@@ -24,21 +30,28 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
   const [currentStockName, setCurrentStockName] = useState();
   const [currentStockId, setCurrentStockId] = useState();
   const [currentStockTokenGlobal, setCurrentStockTokenGlobal] = useState();
+  
+  const [predictionFileList, setPredictionFileList] = useState([]);
+  const [selectedCurrentPredictionFile, setSelectedCurrentPredictionFile] = useState();
+  const [predictionData, setPredictionData] = useState([]);
 
-  const [stockData, setStockData] = useState({
-    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-    datasets: [{
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      borderColor: 'pink'
-    },
-    {
-      label: '# of Votes',
-      data: [6, 6, 6, 6, 6, 6],
-      borderColor: 'blue'
-    }
-  ]
-  });
+  const [stockDataRaw, setStockDataRaw] = useState([]);
+  // const [stockData, setStockData] = useState({
+  //   labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+  //   datasets: [{
+  //     label: '# of Votes',
+  //     data: [12, 19, 3, 5, 2, 3],
+  //     borderColor: 'pink'
+  //   },
+  //   {
+  //     label: '# of Votes',
+  //     data: [6, 6, 6, 6, 6, 6],
+  //     borderColor: 'blue'
+  //   }
+  // ]
+  // });
+const [stockData, setStockData] = useState(
+  {});
 
   const stockOptions = {
     plugins: {
@@ -56,7 +69,6 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
     }
   }
 
-  const baseUrl = "http://127.0.0.1:8000"
 
   useEffect(() => {
     // getStockList();
@@ -94,30 +106,61 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
     getChartData();
   }, []);
 
+  const convertDataToChartWithPrediction = (stockData, predictionData) => {
+    console.log("Called convertDataToChartWithPrediction()");
+    // console.log("StockData");
+    // console.log(stockData);
+    // console.log("predictionData");
+    // console.log(predictionData);
+    
+    
+    // let pred_data_formatted = predictionData.map((stData) => ({ x: stData.date, y: stData.predicted }));
+    let prediction_labels = predictionData.map((stHist)=>stHist.date);
+    let historical_labels = stockData.map((stHist)=>stHist.timestamp.split("T")[0]);
+    let merged_label_set  = new Set([...historical_labels, ...prediction_labels] );
+    // Convet the set beack to array 
+    let all_labels = [...merged_label_set];
+    // console.log("all_labels");
+    // console.log(all_labels);
+    let chart_data_with_prediction = {
+      labels: all_labels,
+      datasets: [{
+        label: 'Prediction',
+        data: predictionData.map((stHist) => ({ x: stHist.date, y: stHist.predicted })),
+        borderColor: 'red'
+      },
+      {
+        label: 'Historical',
+        data: stockData.map((stHist) => ({ x: stHist.timestamp.split("T")[0], y: stHist.open })),
+        borderColor: 'olivedrab',
+        backgroundColor: 'palegreen'
+      }
+    ]
+    }
+    // console.log("chart_data_with_prediction");
+    // console.log(chart_data_with_prediction);
+    return chart_data_with_prediction;
+  }
+
   const convertDataToChart = (chart_data_raw) => {
     console.log("Converting Stocks");
     var chartData = 
     {
-      labels: chart_data_raw.map((stHist)=>(stHist.timestamp.split("T"))),
+      labels: chart_data_raw.map((stHist)=>(stHist.timestamp.split("T")[0])),
       datasets: [
         {
           id:"A",
-          label:'buy_qty',
+          label:'open',
           backgroundColor: 'palegreen',
           borderColor: 'olivedrab',
-          data:chart_data_raw.map((stHist)=>stHist.close),
-        },
-        // {
-        //   id:"B",
-        //   label:'sell_qty',
-        //   backgroundColor: 'darkred',
-        //   borderColor: 'firebrick',
-        //   data:chart_data_raw.map((stHist)=>stHist.low),
-        // },
-
+          data:chart_data_raw.map((stHist)=>stHist.open),
+        }
       ]
     }
-    console.log(chartData);
+    if (predictionData.length > 0){
+
+    }
+    // console.log(chartData);
     return chartData;
 
   }
@@ -126,7 +169,7 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:currentStockId != undefined? currentStockId:stock_id, frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
+    let queryParams = {stock_id:currentStockId != undefined? currentStockId:stock_id, frequency:chartDefaultFrequency, from_date:chartDefaultFromDate, to_date:chartDefaultToDate, user_id: chartDefaultUser, oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
@@ -137,14 +180,118 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
         .then(response => response.json())
         .then(stocks => {
           // setStocks(stocks);
-          console.log("stocks - ");
-          console.log(stocks);
-          console.log(stockData.length);
+          // console.log("stocks - ");
+          // console.log(stocks);
+          // console.log(stockData.length);
+          setStockDataRaw(stocks);
           setStockData(convertDataToChart(stocks));
-          console.log(stockData.length);
+          // console.log(stockData.length);
           // console.log(getStockArrayToObject(stocks));
         });
   }
+
+  const displayPredictionDay = (full_path) => {
+    if (full_path == undefined || full_path == null){
+      return "";
+    }
+    console.log("Calling displayPredictionDay()");
+    let full_path_splitted = full_path.split('/');
+    console.log("full_path_splitted", full_path_splitted);
+    let prediction_day_full = full_path.split('/')[full_path_splitted.length-1];
+    console.log("prediction_day_full", prediction_day_full);
+    let prediction_day_splitted = prediction_day_full.split("_");
+    console.log("prediction_day_splitted", prediction_day_splitted);
+    let prediction_day = prediction_day_splitted[0];
+    console.log("prediction_day", prediction_day);
+    // console.log(prediction_day);
+    
+    return prediction_day;
+  }
+
+  const getAvailablePredictionList = () => {
+    // event.preventDefault();
+    console.log("querying Stocks");
+    var queryUrl = `${predictionFileListEndpoint}/?folder_path=${sftpBaseLocation + (currentStockName != undefined? currentStockName:stock_name) + '/predictions/'}`
+    console.log("url - ");
+    console.log(queryUrl);
+    fetch(queryUrl, {
+      method: 'get',
+      headers: {'stock_authorization': (currentStockTokenGlobal != undefined? currentStockTokenGlobal: stockTokenGlobal)}
+    })
+        .then(response => response.json())
+        .then(pred_list => {
+          console.log("pred_list - ");
+          console.log(pred_list);
+          setPredictionFileList(pred_list);
+          // console.log(getStockArrayToObject(stocks));
+        });
+  }
+
+  const getPredictionData = () => {
+    // event.preventDefault();
+    console.log("querying Stocks");
+    var queryUrl = `${predictionEndpoint}/?file_path=${selectedCurrentPredictionFile}`
+    console.log("url - ");
+    console.log(queryUrl);
+    fetch(queryUrl, {
+      method: 'get',
+      headers: {'stock_authorization': (currentStockTokenGlobal != undefined? currentStockTokenGlobal: stockTokenGlobal)}
+    })
+        .then(response => response.json())
+        .then(prediction => {
+          // setStocks(stocks);
+          console.log("prediction - ");
+          console.log(prediction);
+          // console.log();
+          
+          setPredictionData(prediction);
+          setStockData(convertDataToChartWithPrediction(stockDataRaw, prediction));
+          // setPredictionFileList(pred_list);
+          // console.log(getStockArrayToObject(stocks));
+        });
+  }
+
+  const predictionDropDown = () => {
+    return (
+      <div class="dropdown">
+        <a data-mdb-button-init
+          data-mdb-ripple-init data-mdb-dropdown-init class="btn dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton"
+          data-mdb-toggle="dropdown"
+          aria-expanded="false">
+          <p>Prediction List</p>
+        </a>
+  
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li>
+            <div class="dropdown mx-3">
+              <button data-mdb-button-init
+                data-mdb-ripple-init data-mdb-dropdown-init class="btn dropdown-toggle"
+                type="button"
+                id="dropdownMenuPredictionButton"
+                data-mdb-toggle="dropdown"
+                aria-expanded="false"
+              >{displayPredictionDay(selectedCurrentPredictionFile)}</button>
+              <button data-mdb-button-init data-mdb-dropdown-init class="btn"
+                type="button"
+                aria-expanded="false"
+                onClick={()=>getPredictionData()}
+                disabled={selectedCurrentPredictionFile==undefined || selectedCurrentPredictionFile==null}
+              >Show Prediction</button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuPredictionButton">
+                  {(predictionFileList!=undefined && predictionFileList!=null && Object.prototype.toString.call(predictionFileList) == '[object Array]') ? predictionFileList.map((predFile) => 
+                  <li><a class="dropdown-item" style={{"backgroundColor": predFile==selectedCurrentPredictionFile ? "green":""}} onClick={()=>setSelectedCurrentPredictionFile(predFile)}>{displayPredictionDay(predFile)}</a></li>
+                  ) : <></>}
+              </ul>
+            </div>
+          </li>
+          {/* <li><a class="dropdown-item">Select Summary Model <MdRefresh style={{ color: "black"}} onClick={()=>initializeMLModels()}/></a></li> */}
+        </ul>
+      </div>
+    )
+  }
+  
 
   function clicked2(evnt, stock_price_multiple_0_05){
     // console.log(evnt);
@@ -186,7 +333,9 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
         {/* {console.log(getChartSize)} */}
         {/* chart.split(':')[1] */}
         <IoRefreshSharp onClick={(event) => getChartData(event)}/>
-        {(Object.keys(stockData).length>0)? 
+        <p>Load Predictions<IoRefreshSharp onClick={(event) => getAvailablePredictionList(event)}/></p>
+        {predictionDropDown()}
+        {(stockData != null && stockData!= undefined && Object.keys(stockData).length>0)? 
         <Chart type='line' data={stockData} 
 
         options={{
@@ -199,7 +348,7 @@ const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
           }
         }}
         /> :
-        <p>Not Found {Object.keys(stockData).length}</p>
+        <p>Not Found {stockData != null && stockData!= undefined && Object.keys(stockData).length}</p>
         
         }
         </div>

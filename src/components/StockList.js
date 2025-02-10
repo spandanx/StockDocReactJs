@@ -32,18 +32,18 @@ const StockList = ({stockTokenGlobal}) => {
       "total_price": 19684.9
   },
   {
-      "tradingsymbol_with_exchange": "NSE_EQ_NTPCGREEN",
-      "quantity": 171,
-      "last_price": 112.32,
-      "average_price": 114.73,
-      "current_value": 19206.72,
-      "profit_and_loss": -412.11,
-      "net_change": -3.59,
-      "day_change": -0.75,
-      "symbol": "NTPCGREEN",
-      "exchange": "NSE",
-      "instrument_token": 6957057,
-      "total_price": 19206.72
+      "tradingsymbol_with_exchange": "BSE_EQ_RVNL",
+      "quantity": 41,
+      "last_price": 395.35,
+      "average_price": 403.02,
+      "current_value": 16209.35,
+      "profit_and_loss": -314.5,
+      "net_change": -0.78,
+      "day_change": 0,
+      "symbol": "RVNL",
+      "exchange": "BSE",
+      "instrument_token": 138918148,
+      "total_price": 16209.35
   },
   {
       "tradingsymbol_with_exchange": "NSE_EQ_HUDCO",

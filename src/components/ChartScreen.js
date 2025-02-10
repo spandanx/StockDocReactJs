@@ -23,9 +23,9 @@ const ChartScreen = (props) => {
     datasets: [{
       label: '# of Votes',
       data: [
-        {
-            labels: ["Red", "Blue", "Yellow"],
-        },
+        // {
+        //     labels: ["Red", "Blue", "Yellow"],
+        // },
         {
             x: "Red",
             y: 7
@@ -44,9 +44,9 @@ const ChartScreen = (props) => {
     {
       label: '# of Votes',
       data: [
-        {
-            labels: ["Yellow", "Green", "Purple", "Orange"],
-        },
+        // {
+        //     labels: ["Yellow", "Green", "Purple", "Orange"],
+        // },
         {
             x: "Yellow",
             y: 7
