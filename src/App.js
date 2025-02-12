@@ -11,6 +11,10 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import {ToastContainer, toast } from 'react-toastify';
 
+import Login from './components/Login/LoginPage';
+import RegistrationPage from './components/Login/RegisterPage';
+
+
 import {
   BrowserRouter as Router,
   Routes ,
@@ -27,7 +31,6 @@ function App() {
   const [authToken, setAuthToken] = useState('');
   const [activeUser, setActiveUser] = useState('ABC');
   const [stockTokenGlobal, setStockTokenGlobal] = useState('');
-  
 
   const setToken = (token) => {
     console.log("Setting Token", token);
@@ -47,7 +50,7 @@ function App() {
             ))}
           </div> */}
         </div>
-        <Navbar bg="secondary" data-bs-theme="dark">
+        {/* <Navbar bg="secondary" data-bs-theme="dark">
         <Container>
           <Navbar.Brand href="#home">
             Navbar
@@ -61,19 +64,21 @@ function App() {
             </Nav.Link>
           </Nav>
         </Container>
-      </Navbar>
+      </Navbar> */}
         <div class="form-group row my-3 justify-content-between">
           {/* <StockNavBar updateStockList={setStockList} updateStockChartData={setStockChartDataAll} stockList={stockList} stockChartDataAll={stockChartDataAll}/> */}
-          <StockNavBar/>
+          {/* <StockNavBar/> */}
           {/* {Object.keys(stockChartDataAll).length} */}
         </div>
         <div class="form-group justify-content-between">
           <Routes>
             {/* <Route path="/" element={<StockList stockArray={stockList}/>}/> */}
-            <Route path="/" element={<ChartScreen/>}/>
+            <Route path="/" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
             <Route path="/chart" element={<ChartScreen/>}/>
             <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal}/>}/>
-            <Route path="/dynamic-chart" element={<ChartScreenDynamic stock_name="IREDA" stock_id="139270660" stockTokenGlobal={stockTokenGlobal} />}/>
+            <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} />}/>
+            <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
+            <Route path="/register" element={<RegistrationPage/>}/>
             {/* <Route path="/"/> */}
           </Routes>
         </div>

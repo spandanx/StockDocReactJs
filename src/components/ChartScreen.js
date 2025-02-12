@@ -19,55 +19,64 @@ const ChartScreen = (props) => {
   const [clickedStock, setClickedStock] = useState({});
 
   const [stockData, setStockData] = useState({
-    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-    datasets: [{
-      label: '# of Votes',
-      data: [
-        // {
-        //     labels: ["Red", "Blue", "Yellow"],
-        // },
+    "labels": [
+        "2024-08-12",
+        "2024-08-13",
+        "2024-08-14",
+        "2024-08-16",
+        "2024-08-19",
+        "2024-08-20",
+        "2024-08-21",
+        "2024-08-22"
+    ],
+    "datasets": [
         {
-            x: "Red",
-            y: 7
+            "label": "Prediction",
+            "data": [
+                {
+                    "x": "2024-08-12",
+                    "y": 522.35
+                },
+                {
+                    "x": "2024-08-13",
+                    "y": 582.75
+                },
+                {
+                    "x": "2024-08-14",
+                    "y": 571.2
+                },
+                {
+                    "x": "2024-08-16",
+                    "y": 560.05
+                }
+            ],
+            "borderColor": "red"
         },
         {
-            x: "Blue",
-            y: 3
-        },
-        {
-          x: "Yellow",
-          y: 8
+            "label": "Historical",
+            "data": [
+                {
+                    "x": "2024-08-19",
+                    "y": 581.2
+                },
+                {
+                    "x": "2024-08-20",
+                    "y": 575
+                },
+                {
+                    "x": "2024-08-21",
+                    "y": 560.05
+                },
+                {
+                    "x": "2024-08-22",
+                    "y": 573.65
+                }
+            ],
+            "borderColor": "olivedrab",
+            "backgroundColor": "palegreen"
         }
-      ],
-      borderColor: 'pink'
-    },
-    {
-      label: '# of Votes',
-      data: [
-        // {
-        //     labels: ["Yellow", "Green", "Purple", "Orange"],
-        // },
-        {
-            x: "Yellow",
-            y: 7
-        },
-        {
-            x: "Green",
-            y: 10
-        },
-        {
-            x: "Purple",
-            y: 2
-        },
-        {
-            x: "Orange",
-            y: 6
-        }
-      ],
-      borderColor: 'blue'
-    }
-  ]
-  });
+    ]
+});
 
   const stockOptions = {
     plugins: {

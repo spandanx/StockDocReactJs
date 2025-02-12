@@ -1,12 +1,13 @@
-// import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 
-// const salt = "ajsPamkanAmMnam22";
-
-// const loginUrl = baseUrl + "/token/"
+const salt = "asjajaj00aanansAm44";
 const sftpBaseLocation = "/home/gamma/stockdoc/"
 const baseUrl = "http://127.0.0.1:8000"
 const predictionFileListEndpoint = baseUrl + "/list-prediction-files";
 const predictionEndpoint = baseUrl + '/prediction';
+const loginUrl = baseUrl + "/token/"
+const registerUrl = baseUrl + "/users/register/"
+const healthCheckUrl = baseUrl + "/healthcheck/"
 
 function formatDate(date) {
     var d = new Date(date),
@@ -22,6 +23,7 @@ function formatDate(date) {
     return [year, month, day].join('-');
 }
 
+
 const chartDefaultFrequency = "day";
 const chartDefaultUser = "CCN088";
 const today = new Date()
@@ -32,24 +34,25 @@ console.log(chartDefaultFromDate, chartDefaultToDate);
 
 //"2024-11-25"
 
-// const encryptData = (text) => {
-//     const data = CryptoJS.AES.encrypt(
-//         JSON.stringify(text),
-//         salt
-//     ).toString();
-//         console.log("encryptData() - input - ", text, " Output -  ", data);
-//         return data;
-//     };
+const encryptData = (text) => {
+    const data = CryptoJS.AES.encrypt(
+        JSON.stringify(text),
+        salt
+    ).toString();
+        console.log("encryptData() - input - ", text, " Output -  ", data);
+        return data;
+    };
 
-// const decryptData = (text) => {
-//     console.log("Calling decryptData()");
-//     console.log(text);
-//     console.log(salt);
-//     const bytes = CryptoJS.AES.decrypt(text, salt);
-//     const data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-//     console.log("decryptData() - input - ", text, " Output -  ", data);
-//     return data;
-// };
+const decryptData = (text) => {
+    console.log("Calling decryptData()");
+    console.log(text);
+    console.log(salt);
+    const bytes = CryptoJS.AES.decrypt(text, salt);
+    const data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    console.log("decryptData() - input - ", text, " Output -  ", data);
+    return data;
+};
 
-export {sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser
+export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser,
+    loginUrl, registerUrl, healthCheckUrl
 };

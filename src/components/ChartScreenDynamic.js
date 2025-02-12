@@ -137,8 +137,8 @@ const [stockData, setStockData] = useState(
       }
     ]
     }
-    // console.log("chart_data_with_prediction");
-    // console.log(chart_data_with_prediction);
+    console.log("chart_data_with_prediction");
+    console.log(chart_data_with_prediction);
     return chart_data_with_prediction;
   }
 
@@ -165,11 +165,37 @@ const [stockData, setStockData] = useState(
 
   }
 
+  const getCurrentStockId = () => {
+    if (location.state?.stock_id != null && location.state?.stock_id != undefined){
+      return location.state.stock_id;
+    }
+    else if (currentStockId != null && currentStockId != undefined){
+      return currentStockId
+    }
+    else if (stock_id != null && stock_id != undefined) {
+      return stock_id
+    }
+    return ""
+  }
+
+  const getCurrentStockName = () => {
+    if (location.state?.stock_name != null && location.state?.stock_name != undefined){
+      return location.state.stock_name;
+    }
+    else if (currentStockName != null && currentStockName != undefined){
+      return currentStockName
+    }
+    else if (stock_name != null && stock_name != undefined) {
+      return stock_name
+    }
+    return ""
+  }
+
   const getChartData = () => {
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:currentStockId != undefined? currentStockId:stock_id, frequency:chartDefaultFrequency, from_date:chartDefaultFromDate, to_date:chartDefaultToDate, user_id: chartDefaultUser, oi: "1"}
+    let queryParams = {stock_id:getCurrentStockId(), frequency:chartDefaultFrequency, from_date:chartDefaultFromDate, to_date:chartDefaultToDate, user_id: chartDefaultUser, oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
@@ -254,15 +280,16 @@ const [stockData, setStockData] = useState(
   const predictionDropDown = () => {
     return (
       <div class="dropdown">
-        <a data-mdb-button-init
-          data-mdb-ripple-init data-mdb-dropdown-init class="btn dropdown-toggle"
-          type="button"
-          id="dropdownMenuButton"
-          data-mdb-toggle="dropdown"
-          aria-expanded="false">
-          <p>Prediction List</p>
-        </a>
-  
+        <p>Load Predictions <IoRefreshSharp onClick={(event) => getAvailablePredictionList(event)}/></p>
+        <p>Prediction List 
+          <a data-mdb-button-init
+            data-mdb-ripple-init data-mdb-dropdown-init class="btn dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-mdb-toggle="dropdown"
+            aria-expanded="false">
+          </a>
+        </p>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <li>
             <div class="dropdown mx-3">
@@ -332,8 +359,7 @@ const [stockData, setStockData] = useState(
       <div class="row">
         {/* {console.log(getChartSize)} */}
         {/* chart.split(':')[1] */}
-        <IoRefreshSharp onClick={(event) => getChartData(event)}/>
-        <p>Load Predictions<IoRefreshSharp onClick={(event) => getAvailablePredictionList(event)}/></p>
+        <p>Reload Chart <IoRefreshSharp onClick={(event) => getChartData(event)}/></p>
         {predictionDropDown()}
         {(stockData != null && stockData!= undefined && Object.keys(stockData).length>0)? 
         <Chart type='line' data={stockData} 
@@ -343,7 +369,7 @@ const [stockData, setStockData] = useState(
           plugins: {
             title: {
               display: true,
-              text: (currentStockName != undefined? currentStockName:stock_name)
+              text: getCurrentStockName()
             }
           }
         }}
