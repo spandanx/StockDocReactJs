@@ -6,7 +6,8 @@ import { Form, Button, Alert } from 'react-bootstrap';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { MdAccountCircle, MdContentCopy } from "react-icons/md";
-import {updateStockTokenUrl, accountInfoUrl} from "../../src/common/Properties.js";
+import { IoRefreshSharp } from "react-icons/io5";
+import {updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo} from "../../src/common/Properties.js";
 
 import {pointerHover} from '../styles/cursor.js';
 
@@ -23,12 +24,21 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
     console.log("Calling useEffect()");
     console.log("Initial location");
     // console.log(location);
-    loadSessionStorage();
+    // loadSessionStorage();
+    let login_status = loadSessionStorage(activeUser, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken).then(res=>{
+      console.log("login_status response");
+      console.log(res);
+      if (res["login_status"] == "LOGGED_OUT"){
+        navigate('/login');
+      }
+    }
+    );
+    
   }, []);
 
   useEffect(()=>{
     console.log("Location pathname change Detected");
-    loadSessionStorage();
+    // loadSessionStorage();
   }, [location.pathname]);
 
 
@@ -47,24 +57,24 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
       });
   }
 
-  const loadSessionStorage = async () => {
-    console.log("calling loadSessionStorage()");
-    let userData = JSON.parse(sessionStorage.getItem('userData'));
-    if (userData == undefined || userData == null){
-      console.log("userData is not present in session storage, routing to login page");
-      navigate('/login');
-    }
-    else{
-      console.log("userData is present in session storage");
-      console.log(userData);
-      let username = userData.activeuser;
-      let token = userData.token;
-      setActiveUser(username);
-      setToken(token);
-      getAccountInfo(username);
-      navigate('/chart');
-    }
-  }
+  // const loadSessionStorage = async () => {
+  //   console.log("calling loadSessionStorage()");
+  //   let userData = JSON.parse(sessionStorage.getItem('userData'));
+  //   if (userData == undefined || userData == null){
+  //     console.log("userData is not present in session storage, routing to login page");
+  //     navigate('/login');
+  //   }
+  //   else{
+  //     console.log("userData is present in session storage");
+  //     console.log(userData);
+  //     let username = userData.activeuser;
+  //     let token = userData.token;
+  //     setActiveUser(username);
+  //     setToken(token);
+  //     getAccountInfo(username);
+  //     // navigate('/chart');
+  //   }
+  // }
 
   const logout = () => {
     sessionStorage.removeItem('userData');
@@ -73,33 +83,25 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
     navigate('/login');
   }
 
-  const getAccountInfo = (username) => {
-    console.log("Called getAccountInfo()", username);
-    // event.preventDefault();
-    
-    var queryUrl = `${accountInfoUrl}?current_user=${username}`
-    console.log("url - ");
-    console.log(queryUrl);
-    fetch(queryUrl, {
-        method: 'get',
-        })
-        .then(response => response.json())
-        .then(accInfo => {
-          console.log(accInfo);
-          setStockTokenGlobal(accInfo.stock_token);
-        });
-    }
 
   const updateStockTokenDB = (token, username) => {
-    console.log("token, username", token, username);
+    console.log("Calling updateStockTokenDB()");
+    
+    console.log("token", token);
+    console.log("username", username);
     // event.preventDefault();
     setStockTokenGlobal(stockTokenLocal);
     
-    var queryUrl = `${updateStockTokenUrl}?token=${token}&username=${username}`
+    var queryUrl = `${updateStockTokenUrl}`
     console.log("url - ");
     console.log(queryUrl);
     fetch(queryUrl, {
         method: 'put',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          "username": username,
+          "stock_token": token
+        })
         })
         .then(response => response.json())
         .then(msg => {
@@ -128,6 +130,8 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
               <div class="dropdown-divider"></div>
               <a class="dropdown-item fw-bold">Token: {stockTokenGlobal.substring(0,5) + (stockTokenGlobal? ' ...': 'NA')}</a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item">Load Token <IoRefreshSharp onClick={(event) => getAccountInfo(activeUser, accountInfoUrl, setStockTokenGlobal)}/></a>
+              <div class="dropdown-divider"></div>
               {/* <input
                 className='form-input'
                 type='text'
@@ -138,24 +142,29 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
               />
               <div class="dropdown-divider"></div>
               <button type="reset" onClick={e => setStockTokenGlobal(e.target.value)}>Set Token</button> */}
-              <Form onSubmit={e => {e.preventDefault(); updateStockTokenDB(stockTokenLocal, activeUser);}} className="login-form">
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Set Stock Token</Form.Label>
-                    <Form.Control
-                    type="username"
-                    placeholder="Enter stock token for the day..."
-                    value={stockTokenLocal}
-                    onChange={(e) => setStockTokenLocal(e.target.value)}
-                    />
-                </Form.Group>
+              <div class="dropdown-item">
+                <Form onSubmit={e => {e.preventDefault(); updateStockTokenDB(stockTokenLocal, activeUser);}} className="login-form">
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                      <Form.Label>Set Stock Token</Form.Label>
+                      <Form.Control
+                      type="username"
+                      placeholder="Enter stock token for the day..."
+                      value={stockTokenLocal}
+                      onChange={(e) => setStockTokenLocal(e.target.value)}
+                      />
+                  </Form.Group>
 
-                <Button variant="primary" type="submit" className="login-button">
-                  Set Token
-                </Button>
-                </Form>
+                  <Button variant="primary" type="submit" className="login-button">
+                    Set Token
+                  </Button>
+                  </Form>
+                </div>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" style = {{color: "red"}} onClick={()=>logout()}>Logout</a>
-              {/* <a class="dropdown-item" style = {{color: "red"}} onClick={()=>logout()}>Logout</a> */}
+                <a class="dropdown-item" style = {{color: "red"}} onClick={()=>logout()}>
+                <Button variant="danger" className="login-button" onClick={()=>logout()}>
+                Logout
+                  </Button>
+                </a>
             </div>
           </div>
           }

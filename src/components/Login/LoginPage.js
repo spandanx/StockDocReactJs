@@ -4,11 +4,11 @@ import {Link } from "react-router-dom";
 import '../../styles/Login.css';
 import { useNavigate } from 'react-router-dom';
 
-import {encryptData, loginUrl, accountInfoUrl} from '../../common/Properties';
+import {encryptData, loginUrl, accountInfoUrl, loadSessionStorage} from '../../common/Properties';
 
 // import CryptoJS from "crypto-js";
 
-function Login({setToken, setActiveUser}) {
+function Login({setToken, setActiveUser, setStockTokenGlobal}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -28,8 +28,13 @@ function Login({setToken, setActiveUser}) {
   };
 
 
-  const loginUser = (event) => {
+  const loginUser = async(event) => {
     event.preventDefault();
+    await loadSessionStorage(username, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken).then(res=>{
+      console.log("login_status response");
+      console.log(res);
+    }
+    );
     generateTokenAndLogin();
   };
 

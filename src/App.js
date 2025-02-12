@@ -29,9 +29,8 @@ function App() {
   // const [stockChartDataAll, setStockChartDataAll] = useState({});
   // const [stockList, setStockList] = useState([]);
   const [authToken, setAuthToken] = useState('');
-  const [activeUser, setActiveUser] = useState('ABC');
+  const [activeUser, setActiveUser] = useState('');
   const [stockTokenGlobal, setStockTokenGlobal] = useState('');
-  const [accountInfo, setAccountInfo] = useState('');
 
   const setToken = (token) => {
     console.log("Setting Token", token);
@@ -41,8 +40,7 @@ function App() {
   return (
     <>
     <Router>
-    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal}
-    accountInfo={accountInfo} setAccountInfo={setAccountInfo}/>
+    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal}/>
     <div class="form-horizontal container" role="form" id="light">
         <div class="form-group row my-3 justify-content-between">
           <ToastContainer/>
@@ -52,21 +50,23 @@ function App() {
             ))}
           </div> */}
         </div>
-        {/* <Navbar bg="secondary" data-bs-theme="dark">
-        <Container>
-          <Navbar.Brand href="#home">
-            Navbar
-            </Navbar.Brand>
-          <Nav className="me-auto text-white">
-            <Nav.Link as={Link} to="/chart">
-              AllChart
-            </Nav.Link>
-            <Nav.Link as={Link} to="/holdings">
-              Holdings
-            </Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar> */}
+        {(activeUser != undefined && activeUser != "") &&
+          <Navbar bg="secondary" data-bs-theme="dark">
+          <Container>
+            <Navbar.Brand href="#home">
+              Navbar
+              </Navbar.Brand>
+            <Nav className="me-auto text-white">
+              <Nav.Link as={Link} to="/chart">
+                AllChart
+              </Nav.Link>
+              <Nav.Link as={Link} to="/holdings">
+                Holdings
+              </Nav.Link>
+            </Nav>
+          </Container>
+        </Navbar>
+        }
         <div class="form-group row my-3 justify-content-between">
           {/* <StockNavBar updateStockList={setStockList} updateStockChartData={setStockChartDataAll} stockList={stockList} stockChartDataAll={stockChartDataAll}/> */}
           {/* <StockNavBar/> */}
@@ -79,7 +79,7 @@ function App() {
             <Route path="/chart" element={<ChartScreen/>}/>
             <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal}/>}/>
             <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} />}/>
-            <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
+            <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal}/>}/>
             <Route path="/register" element={<RegistrationPage/>}/>
             {/* <Route path="/"/> */}
           </Routes>

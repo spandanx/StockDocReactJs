@@ -55,7 +55,44 @@ const decryptData = (text) => {
     return data;
 };
 
+const getAccountInfo = (username, accountInfoUrl, setStockTokenGlobal) => {
+    console.log("Called getAccountInfo()", username);
+    // event.preventDefault();
+
+    var queryUrl = `${accountInfoUrl}?current_user=${username}`
+    console.log("url - ");
+    console.log(queryUrl);
+    fetch(queryUrl, {
+        method: 'get',
+        })
+        .then(response => response.json())
+        .then(accInfo => {
+            console.log(accInfo);
+            setStockTokenGlobal(accInfo.stock_token);
+        });
+}
+
+const loadSessionStorage = async (username, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken) => {
+    console.log("calling loadSessionStorage()");
+    let userData = JSON.parse(sessionStorage.getItem('userData'));
+    if (userData == undefined || userData == null){
+      console.log("userData is not present in session storage, routing to login page");
+    //   navigate('/login');
+        return {"login_status": "LOGGED_OUT"}
+    }
+    else{
+      console.log("userData is present in session storage");
+      console.log(userData);
+      let username = userData.activeuser;
+      let token = userData.token;
+      setActiveUser(username);
+      setToken(token);
+      getAccountInfo(username, accountInfoUrl, setStockTokenGlobal);
+      // navigate('/chart');
+      return {"login_status": "LOGGED_IN"}
+    }
+  }
 
 export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser,
-    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl
+    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo
 };

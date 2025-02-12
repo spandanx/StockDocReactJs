@@ -143,6 +143,11 @@ const [stockData, setStockData] = useState(
   }
 
   const convertDataToChart = (chart_data_raw) => {
+    console.log("Called convertDataToChart()", chart_data_raw);
+    if (chart_data_raw == null || chart_data_raw == undefined || Object.prototype.toString.call(chart_data_raw) != '[object Array]'){
+      console.log("Invalid chart_data_raw");
+      return
+    }
     console.log("Converting Stocks");
     var chartData = 
     {
@@ -156,9 +161,6 @@ const [stockData, setStockData] = useState(
           data:chart_data_raw.map((stHist)=>stHist.open),
         }
       ]
-    }
-    if (predictionData.length > 0){
-
     }
     // console.log(chartData);
     return chartData;
@@ -206,8 +208,8 @@ const [stockData, setStockData] = useState(
         .then(response => response.json())
         .then(stocks => {
           // setStocks(stocks);
-          // console.log("stocks - ");
-          // console.log(stocks);
+          console.log("stocks - ");
+          console.log(stocks);
           // console.log(stockData.length);
           setStockDataRaw(stocks);
           setStockData(convertDataToChart(stocks));
