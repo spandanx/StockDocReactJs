@@ -8,6 +8,8 @@ const predictionEndpoint = baseUrl + '/prediction';
 const loginUrl = baseUrl + "/token/"
 const registerUrl = baseUrl + "/users/register/"
 const healthCheckUrl = baseUrl + "/healthcheck/"
+const updateStockTokenUrl = baseUrl + "/users/update-stock-token/"
+const accountInfoUrl = baseUrl + "/users/self-info/"
 
 function formatDate(date) {
     var d = new Date(date),
@@ -53,6 +55,7 @@ const decryptData = (text) => {
     return data;
 };
 
+
 export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser,
-    loginUrl, registerUrl, healthCheckUrl
+    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl
 };

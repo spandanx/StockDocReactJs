@@ -31,6 +31,7 @@ function App() {
   const [authToken, setAuthToken] = useState('');
   const [activeUser, setActiveUser] = useState('ABC');
   const [stockTokenGlobal, setStockTokenGlobal] = useState('');
+  const [accountInfo, setAccountInfo] = useState('');
 
   const setToken = (token) => {
     console.log("Setting Token", token);
@@ -40,7 +41,8 @@ function App() {
   return (
     <>
     <Router>
-    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal}/>
+    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal}
+    accountInfo={accountInfo} setAccountInfo={setAccountInfo}/>
     <div class="form-horizontal container" role="form" id="light">
         <div class="form-group row my-3 justify-content-between">
           <ToastContainer/>
