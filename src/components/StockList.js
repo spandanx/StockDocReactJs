@@ -10,7 +10,7 @@ import { IoRefreshSharp } from "react-icons/io5";
 import { RiShareForwardFill } from "react-icons/ri";
 import ChartScreenDynamic from "./ChartScreenDynamic"
 import { useNavigate } from 'react-router-dom';
-import { formatDate } from '../common/Properties';
+import { formatDate, baseUrl } from '../common/Properties';
 // import ButtonGroup from 'react-bootstrap/ButtonGroup';
 // import ToggleButton from 'react-bootstrap/ToggleButton';
 
@@ -29,14 +29,14 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
       "quantity": 10,
       "last_price": 170.19,
       "average_price": 190.1,
-      "current_value": 1701.90,
+      "current_value": 10701.90,
       "profit_and_loss": -201.05,
       "net_change": -1.05,
       "day_change": -5.37,
       "symbol": "IRCON",
       "exchange": "NSE",
       "instrument_token": 1276417,
-      "total_price": 1718.91
+      "total_price": 10718.91
   },
   {
       "tradingsymbol_with_exchange": "BSE_EQ_RVNL",
@@ -57,14 +57,14 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
       "quantity": 16,
       "last_price": 219.84,
       "average_price": 203.25,
-      "current_value": 3517.44,
+      "current_value": 13517.44,
       "profit_and_loss": 265.44,
       "net_change": 1.31,
       "day_change": -0.74,
       "symbol": "HUDCO",
       "exchange": "NSE",
       "instrument_token": 5331201,
-      "total_price": 3517.44
+      "total_price": 13517.44
   }
   ]);
 
@@ -77,6 +77,11 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   // const chartDefaultFromDate = formatDate(startDate);
   // const chartDefaultToDate = formatDate(today);
   const [currentFreqSet, setCurrentFreqSet] = useState("2 Day");
+
+  const stockQtyFilter = ["Greater than 1"];
+  const stockAmountFilter = ["Greater than 1k", "Greater than 10k", "Lesser than 10k"];
+  const [qtyFilter, setQtyFilter] = useState("");
+  const [amtFilter, setAmtFilter] = useState("");
   const chartFreqSet = {
     "1 Day": 
     {
@@ -101,8 +106,6 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   }
 
   const navigate = useNavigate();
-
-  const baseUrl = "http://127.0.0.1:8000";
 
   const [activeStockList, setActiveStockList] = useState([]);
   const [sortOnCol, setSortOnCol] = useState("");
@@ -134,6 +137,51 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   //     </div>
   //   )
   // }
+  const sortStockList = (key) => {
+    console.log("called sortStockList()", key);
+    // console.log(sortOnCol.split(':')[0], sortOnCol.split(':')[1]);
+    let ascending = "true";
+    if (sortOnCol.length == 0){
+      console.log("111");
+      ascending = "true";
+      setSortOnCol(key + ":" + "ASC");
+    }
+    else if (sortOnCol.split(':')[0] != key){
+      console.log("222");
+      ascending = "true";
+      setSortOnCol(key + ":" + "ASC");
+    }
+    else if (sortOnCol.split(':')[0] == key && sortOnCol.split(':')[1] == "ASC"){
+      console.log("333");
+      ascending = "false";
+      setSortOnCol(key + ":" + "DESC");
+    }
+    else{
+      console.log("444");
+      ascending = "NO";
+      setSortOnCol("");
+    }
+    console.log(ascending, sortOnCol);
+    if (ascending == "NO"){
+      console.log("NO SORT");
+      setActiveStockList(stockData);
+    }
+    else if (ascending == "true"){
+      const newStockData = [...activeStockList].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+      setActiveStockList(activeStockList);
+    }
+    else if (ascending == "false"){
+      const newStockData = [...activeStockList].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+      setActiveStockList(newStockData);
+    }
+  }
+
+  const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
+    console.log("Clicked navigate_to_stock_page");
+    console.log(stock_name, stock_id, stockTokenGlobal);
+    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal, activeUserInfo: activeUserInfo}});
+  }
+
   const showStockList = () => {
     // let columns = ["Instrument", "Qty.", "Avg. cost", "LTP", "Cur. val", "P&L", "Net chg.", "Day chg."];
     let stock_col_native_mapping = {
@@ -146,54 +194,6 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
       "Net chg.": "net_change", 
       "Day chg.": "day_change"
     }
-    // stock_col_native_mapping.map((key_, val_) => {
-    //   console.log(key_, val_);
-    // });
-    const sortStockList = (key) => {
-      console.log("called sortStockList()", key);
-      // console.log(sortOnCol.split(':')[0], sortOnCol.split(':')[1]);
-      let ascending = "true";
-      if (sortOnCol.length == 0){
-        console.log("111");
-        ascending = "true";
-        setSortOnCol(key + ":" + "ASC");
-      }
-      else if (sortOnCol.split(':')[0] != key){
-        console.log("222");
-        ascending = "true";
-        setSortOnCol(key + ":" + "ASC");
-      }
-      else if (sortOnCol.split(':')[0] == key && sortOnCol.split(':')[1] == "ASC"){
-        console.log("333");
-        ascending = "false";
-        setSortOnCol(key + ":" + "DESC");
-      }
-      else{
-        console.log("444");
-        ascending = "NO";
-        setSortOnCol("");
-      }
-      console.log(ascending, sortOnCol);
-      if (ascending == "NO"){
-        console.log("NO SORT");
-        setActiveStockList(stockData);
-      }
-      else if (ascending == "true"){
-        const newStockData = [...activeStockList].sort((a, b) => (a[key] > b[key] ? 1 : -1));
-        setActiveStockList(activeStockList);
-      }
-      else if (ascending == "false"){
-        const newStockData = [...activeStockList].sort((a, b) => (a[key] > b[key] ? 1 : -1));
-        setActiveStockList(newStockData);
-    }
-  }
-  const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
-    console.log("Clicked navigate_to_stock_page");
-    console.log(stock_name, stock_id, stockTokenGlobal);
-    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal, activeUserInfo: activeUserInfo}});
-    // navigate('/dynamic-chart', {state:{id:"ABCBBCBCBC"}});
-    
-  }
 
     return (
       <div style={{"overflow-y": "scroll"}}>
@@ -242,28 +242,22 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
           console.log(stocks);
           console.log(stockData.length);
           setStockData(stocks);
-          setActiveStockList(stocks);
+          setActiveStockList(filterStocksOnCondition(qtyFilter, amtFilter));
+          // setActiveStockList(stocks);
           console.log(stockData.length);
           // console.log(getStockArrayToObject(stocks));
         });
     }
+  
+  const fetchCurrentFreqSet = (chartItem) => {
+    setCurrentFreqSet(chartItem);
+    setActiveStockList([]);
+    getHoldings();
+  }
 
   const freqSet = () => {
     console.log("Calling freqSet()");
-    
     console.log(Object.keys(chartFreqSet));
-    
-    // return <Navbar data-bs-theme="dark">
-        {/* <Container>
-          <Nav variant="underline" className="me-auto text-white" defa>
-          {Object.keys(chartFreqSet).map((chartfreqitem, idx) => (
-            <Nav.Link className=''>
-            {chartfreqitem}
-          </Nav.Link>
-          ))}
-          </Nav>
-        </Container>
-      </Navbar> */}
       return <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -272,30 +266,105 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
               <li class="nav-item">
                 <a class={'nav-link' + (currentFreqSet==chartItem ? ' active' : '')} 
                 style={{color: (currentFreqSet==chartItem ? 'green' : 'grey'), textDecoration: (currentFreqSet==chartItem ? 'underline' : 'none')}}
-                onClick={()=>setCurrentFreqSet(chartItem)}>{chartItem}</a>
+                onClick={()=>fetchCurrentFreqSet(chartItem)}>{chartItem}</a>
               </li>
             ))}
           </ul>
         </div>
       </div>
     </nav>
+  }
 
-    // return <ButtonGroup className="mb-2">
-    // {Object.keys(chartFreqSet).map((radio_val, idx) => (
-    //       <ToggleButton
-    //         key={idx}
-    //         id={`radio-${idx}`}
-    //         type="radio"
-    //         variant={idx % 2 ? 'outline-success' : 'outline-danger'}
-    //         name="radio"
-    //         value={currentFreqSet}
-    //         checked={currentFreqSet === radio_val}
-    //         onChange={(e) => {setCurrentFreqSet(radio_val); }}
-    //       >
-    //         {radio_val}
-    //       </ToggleButton>
-    //     ))}
-    //   </ButtonGroup>
+  const filterStocksOnCondition = (qty_item, amt_item) => {
+    console.log(qty_item, amt_item);
+    
+    let filteredStocks = stockData.filter((stockItem) => {
+      console.log(stockItem);
+      let eligible = true;
+      if (qty_item == "Greater than 1"){
+        eligible = eligible & (stockItem.quantity > 1) ? true: false;
+        console.log("Greater than 1", eligible);
+      }
+      else{
+        eligible = eligible & true;
+        console.log("QTY Else", eligible);
+      }
+      //"Greater than 10k", "Lesser than 10k"
+      if (amt_item == "Greater than 1k"){
+        eligible = eligible & (stockItem.total_price > 1000) ? true: false;
+        console.log("Greater than 1k", eligible);
+      }
+      else if (amt_item == "Greater than 10k"){
+        eligible = eligible & (stockItem.total_price > 10000) ? true: false;
+        console.log("Greater than 10k", eligible);
+      }
+      else if (amt_item == "Lesser than 10k"){
+        eligible = eligible & (stockItem.total_price <= 10000) ? true: false;
+        console.log("Lesser than 10k", eligible);
+      }
+      else {
+        eligible = eligible & true;
+        console.log("Amt Else", eligible);
+      }
+      return eligible;
+    });
+    console.log("filteredStocks");
+    console.log(filteredStocks);
+    return filteredStocks;
+  }
+
+  const filterStockQty = (qty_item, amt_item) => {
+    console.log("filterStockQty() called");
+    if (qtyFilter == qty_item){
+      setQtyFilter("");
+    }
+    else{
+      setQtyFilter(qty_item);
+    }
+    setActiveStockList(filterStocksOnCondition(qty_item, amt_item));
+  }
+
+  const filterStockAmount = (qty_item, amt_item) => {
+    console.log("filterStockAmount() called");
+    if (amtFilter == amt_item){
+      setAmtFilter("");
+    }
+    else{
+      setAmtFilter(amt_item);
+    }
+    setActiveStockList(filterStocksOnCondition(qty_item, amt_item));
+  }
+
+  const filters = () => {
+      return <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Quantity
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                {stockQtyFilter.map((qty_item)=>(
+                  <li><a class={"dropdown-item" + (qty_item == qtyFilter ? " active": "")} onClick={()=>{filterStockQty(qty_item, amtFilter)}}>{qty_item}</a></li>
+                ))}
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Amount
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                {stockAmountFilter.map((amt_item) => (
+                    <li><a class={"dropdown-item" + (amt_item == amtFilter ? " active": "")} onClick={()=>filterStockAmount(qtyFilter, amt_item)}>{amt_item}</a></li>
+                )
+              )}
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
   }
 
   return (
@@ -305,7 +374,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
       <a onClick={(event)=>getHoldings()}>HOLDING REFRESH <IoRefreshSharp/></a>
       </div>
       <div class="col-md-3">
-        
+        {filters()}
       </div>
       <div class="col-md-6">
         {freqSet()}
