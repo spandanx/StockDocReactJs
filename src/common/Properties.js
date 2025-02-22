@@ -2,7 +2,7 @@ import CryptoJS from "crypto-js";
 
 const salt = "asjajaj00aanansAm44";
 const sftpBaseLocation = "/home/gamma/stockdoc/"
-const baseUrl = "http://127.0.0.1:8000"
+const baseUrl = "http://localhost:8002"
 const predictionFileListEndpoint = baseUrl + "/list-prediction-files";
 const predictionEndpoint = baseUrl + '/prediction';
 const loginUrl = baseUrl + "/token/"
@@ -27,7 +27,7 @@ function formatDate(date) {
 
 
 const chartDefaultFrequency = "day";
-const chartDefaultUser = "CCN088";
+// const chartDefaultUser = "";
 const today = new Date()
 const startDate = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate()-1);
 const chartDefaultFromDate = formatDate(startDate);
@@ -55,7 +55,7 @@ const decryptData = (text) => {
     return data;
 };
 
-const getAccountInfo = (username, accountInfoUrl, setStockTokenGlobal) => {
+const getAccountInfo = (username, accountInfoUrl, setStockTokenGlobal, setActiveUserInfo) => {
     console.log("Called getAccountInfo()", username);
     // event.preventDefault();
 
@@ -69,10 +69,11 @@ const getAccountInfo = (username, accountInfoUrl, setStockTokenGlobal) => {
         .then(accInfo => {
             console.log(accInfo);
             setStockTokenGlobal(accInfo.stock_token);
+            setActiveUserInfo(accInfo);
         });
 }
 
-const loadSessionStorage = async (username, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken) => {
+const loadSessionStorage = async (username, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken, setActiveUserInfo) => {
     console.log("calling loadSessionStorage()");
     let userData = JSON.parse(sessionStorage.getItem('userData'));
     if (userData == undefined || userData == null){
@@ -87,12 +88,12 @@ const loadSessionStorage = async (username, accountInfoUrl, setStockTokenGlobal,
       let token = userData.token;
       setActiveUser(username);
       setToken(token);
-      getAccountInfo(username, accountInfoUrl, setStockTokenGlobal);
+      getAccountInfo(username, accountInfoUrl, setStockTokenGlobal, setActiveUserInfo);
       // navigate('/chart');
       return {"login_status": "LOGGED_IN"}
     }
   }
 
-export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser,
-    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo
+export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency,
+    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo, formatDate
 };

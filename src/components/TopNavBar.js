@@ -11,7 +11,7 @@ import {updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo}
 
 import {pointerHover} from '../styles/cursor.js';
 
-const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, stockTokenGlobal}) => {
+const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, stockTokenGlobal, setActiveUserInfo}) => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +25,7 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
     console.log("Initial location");
     // console.log(location);
     // loadSessionStorage();
-    let login_status = loadSessionStorage(activeUser, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken).then(res=>{
+    let login_status = loadSessionStorage(activeUser, accountInfoUrl, setStockTokenGlobal, setActiveUser, setToken, setActiveUserInfo).then(res=>{
       console.log("login_status response");
       console.log(res);
       if (res["login_status"] == "LOGGED_OUT"){
@@ -130,7 +130,7 @@ const TopNavBar = ({activeUser, setToken, setActiveUser, setStockTokenGlobal, st
               <div class="dropdown-divider"></div>
               <a class="dropdown-item fw-bold">Token: {stockTokenGlobal.substring(0,5) + (stockTokenGlobal? ' ...': 'NA')}</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item">Load Token <IoRefreshSharp onClick={(event) => getAccountInfo(activeUser, accountInfoUrl, setStockTokenGlobal)}/></a>
+              <a class="dropdown-item">Load Token <IoRefreshSharp onClick={(event) => getAccountInfo(activeUser, accountInfoUrl, setStockTokenGlobal, setActiveUserInfo)}/></a>
               <div class="dropdown-divider"></div>
               {/* <input
                 className='form-input'

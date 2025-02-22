@@ -10,40 +10,47 @@ import { IoRefreshSharp } from "react-icons/io5";
 import { RiShareForwardFill } from "react-icons/ri";
 import ChartScreenDynamic from "./ChartScreenDynamic"
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../common/Properties';
+// import ButtonGroup from 'react-bootstrap/ButtonGroup';
+// import ToggleButton from 'react-bootstrap/ToggleButton';
+
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const StockList = ({stockTokenGlobal}) => {
+const StockList = ({stockTokenGlobal, activeUserInfo}) => {
 
   const [stockData, setStockData] = useState([
     {
-      "tradingsymbol_with_exchange": "BSE_EQ_IREDA",
-      "quantity": 101,
-      "last_price": 194.9,
-      "average_price": 197.88,
-      "current_value": 19684.9,
-      "profit_and_loss": -300.5,
-      "net_change": -1.52,
-      "day_change": -0.99,
-      "symbol": "IREDA",
-      "exchange": "BSE",
-      "instrument_token": 139270660,
-      "total_price": 19684.9
+      "tradingsymbol_with_exchange": "NSE_EQ_IRCON",
+      "quantity": 10,
+      "last_price": 170.19,
+      "average_price": 190.1,
+      "current_value": 1701.90,
+      "profit_and_loss": -201.05,
+      "net_change": -1.05,
+      "day_change": -5.37,
+      "symbol": "IRCON",
+      "exchange": "NSE",
+      "instrument_token": 1276417,
+      "total_price": 1718.91
   },
   {
       "tradingsymbol_with_exchange": "BSE_EQ_RVNL",
-      "quantity": 41,
+      "quantity": 10,
       "last_price": 395.35,
       "average_price": 403.02,
-      "current_value": 16209.35,
-      "profit_and_loss": -314.5,
+      "current_value": 1620.93,
+      "profit_and_loss": -31.4,
       "net_change": -0.78,
       "day_change": 0,
       "symbol": "RVNL",
       "exchange": "BSE",
       "instrument_token": 138918148,
-      "total_price": 16209.35
+      "total_price": 1620.93
   },
   {
       "tradingsymbol_with_exchange": "NSE_EQ_HUDCO",
@@ -60,6 +67,38 @@ const StockList = ({stockTokenGlobal}) => {
       "total_price": 3517.44
   }
   ]);
+
+  const today = new Date()
+  const oneDayAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate()-1);
+  const twoDaysAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate()-2);
+  const sevenDaysAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate()-7);
+  const oneMonthsAgo = new Date(today.getFullYear(), today.getMonth()-1, today.getDate()-1);
+  const sixMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate()-1);
+  // const chartDefaultFromDate = formatDate(startDate);
+  // const chartDefaultToDate = formatDate(today);
+  const [currentFreqSet, setCurrentFreqSet] = useState("2 Day");
+  const chartFreqSet = {
+    "1 Day": 
+    {
+      chartFrequency: "5minute", chartFromDate: formatDate(oneDayAgo), chartToDate: formatDate(today)
+    },
+    "2 Day":
+    {
+      chartFrequency: "30minute", chartFromDate: formatDate(twoDaysAgo), chartToDate: formatDate(today)
+    },
+    "7 Day":
+    {
+      chartFrequency: "30minute", chartFromDate: formatDate(sevenDaysAgo), chartToDate: formatDate(today)
+    },
+    "30 Day":
+    {
+      chartFrequency: "day", chartFromDate: formatDate(oneMonthsAgo), chartToDate: formatDate(today)
+    },
+    "6 Month":
+    {
+      chartFrequency: "day", chartFromDate: formatDate(sixMonthsAgo), chartToDate: formatDate(today)
+    }
+  }
 
   const navigate = useNavigate();
 
@@ -151,7 +190,7 @@ const StockList = ({stockTokenGlobal}) => {
   const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
     console.log("Clicked navigate_to_stock_page");
     console.log(stock_name, stock_id, stockTokenGlobal);
-    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal}});
+    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal, activeUserInfo: activeUserInfo}});
     // navigate('/dynamic-chart', {state:{id:"ABCBBCBCBC"}});
     
   }
@@ -173,7 +212,7 @@ const StockList = ({stockTokenGlobal}) => {
               {Object.entries(stock_col_native_mapping).map((row_, i_) => (
                 <td>{stockItem[row_[1]]}</td>
               ))}
-              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal}/></td>
+              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} chartFrequency={chartFreqSet[currentFreqSet].chartFrequency} chartFromDate={chartFreqSet[currentFreqSet].chartFromDate} chartToDate={chartFreqSet[currentFreqSet].chartToDate}/></td>
               <td><RiShareForwardFill onClick={(evnt)=>navigate_to_stock_page(stockItem["symbol"], stockItem["instrument_token"], stockTokenGlobal)}/></td>
             </tr>
             ))}
@@ -209,10 +248,70 @@ const StockList = ({stockTokenGlobal}) => {
         });
     }
 
+  const freqSet = () => {
+    console.log("Calling freqSet()");
+    
+    console.log(Object.keys(chartFreqSet));
+    
+    // return <Navbar data-bs-theme="dark">
+        {/* <Container>
+          <Nav variant="underline" className="me-auto text-white" defa>
+          {Object.keys(chartFreqSet).map((chartfreqitem, idx) => (
+            <Nav.Link className=''>
+            {chartfreqitem}
+          </Nav.Link>
+          ))}
+          </Nav>
+        </Container>
+      </Navbar> */}
+      return <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {Object.keys(chartFreqSet).map((chartItem, idx) => (
+              <li class="nav-item">
+                <a class={'nav-link' + (currentFreqSet==chartItem ? ' active' : '')} 
+                style={{color: (currentFreqSet==chartItem ? 'green' : 'grey'), textDecoration: (currentFreqSet==chartItem ? 'underline' : 'none')}}
+                onClick={()=>setCurrentFreqSet(chartItem)}>{chartItem}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    // return <ButtonGroup className="mb-2">
+    // {Object.keys(chartFreqSet).map((radio_val, idx) => (
+    //       <ToggleButton
+    //         key={idx}
+    //         id={`radio-${idx}`}
+    //         type="radio"
+    //         variant={idx % 2 ? 'outline-success' : 'outline-danger'}
+    //         name="radio"
+    //         value={currentFreqSet}
+    //         checked={currentFreqSet === radio_val}
+    //         onChange={(e) => {setCurrentFreqSet(radio_val); }}
+    //       >
+    //         {radio_val}
+    //       </ToggleButton>
+    //     ))}
+    //   </ButtonGroup>
+  }
+
   return (
     <div class="col-md-auto">
       <div class="row">
+      <div class="col-md-3">
       <a onClick={(event)=>getHoldings()}>HOLDING REFRESH <IoRefreshSharp/></a>
+      </div>
+      <div class="col-md-3">
+        
+      </div>
+      <div class="col-md-6">
+        {freqSet()}
+      </div>
+      </div>
+      <div class="row">
         {showStockList()}
       </div>
     </div>

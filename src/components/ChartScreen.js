@@ -182,7 +182,7 @@ const ChartScreen = (props) => {
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:"1276417", frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "CCN088", oi: "1"}
+    let queryParams = {stock_id:"1276417", frequency:"30minute", from_date:"2024-11-25", to_date:"2025-01-24", user_id: "", oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);

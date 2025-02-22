@@ -176,7 +176,7 @@ function RegistrationPage() {
                     </Form.Control.Feedback>
                 </Form.Group>
 
-                <Button variant="primary" type="submit" className="login-button">
+                <Button variant="secondary" type="submit" className="login-button">
                     Register
                 </Button>
                 <div class="d-flex justify-content-center my-3">

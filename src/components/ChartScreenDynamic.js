@@ -10,14 +10,15 @@ import { RiSettings4Fill } from "react-icons/ri";
 import { MdRefresh } from "react-icons/md";
 
 import { useLocation } from 'react-router-dom';
-import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency, chartDefaultUser } from '../common/Properties';
+import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultUser } from '../common/Properties';
+//chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency
 
 import '../styles/PredictionSelection.css'
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal}) => {
+const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal, activeUserInfo, chartFrequency, chartFromDate, chartToDate}) => {
 
 
   const [stockStockPromptScreenX, setStockStockPromptScreenX] = useState(100);
@@ -80,6 +81,9 @@ const [stockData, setStockData] = useState(
     // console.log(currentStockName, currentStockId, currentStockTokenGlobal);
     
     console.log(location);
+    console.log("activeUserInfo");
+    console.log(activeUserInfo);
+    
     // setCurrentStockName(location.state?.stock_name != null ? );
     if (location.state != null){
       console.log("Found FROM location");
@@ -142,16 +146,38 @@ const [stockData, setStockData] = useState(
     return chart_data_with_prediction;
   }
 
+  const getTimeFromString = (dateString) => {
+    let tm = dateString.split('T')[1].split('+')[0].split(':').slice(0, 2).join(':');
+    let dt = dateString.split('T')[0];
+    if (tm == "09:15"){
+      return dt + " " + tm;
+    }
+    return tm;
+  }
+
   const convertDataToChart = (chart_data_raw) => {
     console.log("Called convertDataToChart()", chart_data_raw);
     if (chart_data_raw == null || chart_data_raw == undefined || Object.prototype.toString.call(chart_data_raw) != '[object Array]'){
       console.log("Invalid chart_data_raw");
       return
     }
+    
+    //
+    let historical_labels = chart_data_raw.map((stHist)=>stHist.timestamp.split("T")[0]);
+    if (chartFrequency != "day"){
+      console.log("Frequency is not day");
+      historical_labels = chart_data_raw.map((stHist)=>getTimeFromString(stHist.timestamp));
+      // historical_labels = chart_data_raw.map((stHist)=>stHist.timestamp);
+    }
+    else{
+      console.log("Frequency is day");
+    }
+    //
+
     console.log("Converting Stocks");
     var chartData = 
     {
-      labels: chart_data_raw.map((stHist)=>(stHist.timestamp.split("T")[0])),
+      labels: historical_labels,
       datasets: [
         {
           id:"A",
@@ -197,7 +223,7 @@ const [stockData, setStockData] = useState(
     // event.preventDefault();
     console.log("querying Stocks");
     
-    let queryParams = {stock_id:getCurrentStockId(), frequency:chartDefaultFrequency, from_date:chartDefaultFromDate, to_date:chartDefaultToDate, user_id: chartDefaultUser, oi: "1"}
+    let queryParams = {stock_id:getCurrentStockId(), frequency:chartFrequency, from_date:chartFromDate, to_date:chartToDate, user_id: (activeUserInfo && activeUserInfo.stock_username)? activeUserInfo.stock_username.trim() : "", oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);

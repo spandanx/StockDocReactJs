@@ -31,6 +31,7 @@ function App() {
   const [authToken, setAuthToken] = useState('');
   const [activeUser, setActiveUser] = useState('');
   const [stockTokenGlobal, setStockTokenGlobal] = useState('');
+  const [activeUserInfo, setActiveUserInfo] = useState('');
 
   const setToken = (token) => {
     console.log("Setting Token", token);
@@ -40,7 +41,7 @@ function App() {
   return (
     <>
     <Router>
-    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal}/>
+    <TopNavBar activeUser={activeUser} setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal} stockTokenGlobal={stockTokenGlobal} setActiveUserInfo={setActiveUserInfo}/>
     <div class="form-horizontal container" role="form" id="light">
         <div class="form-group row my-3 justify-content-between">
           <ToastContainer/>
@@ -53,9 +54,6 @@ function App() {
         {(activeUser != undefined && activeUser != "") &&
           <Navbar bg="secondary" data-bs-theme="dark">
           <Container>
-            <Navbar.Brand href="#home">
-              Navbar
-              </Navbar.Brand>
             <Nav className="me-auto text-white">
               <Nav.Link as={Link} to="/chart">
                 AllChart
@@ -67,7 +65,7 @@ function App() {
           </Container>
         </Navbar>
         }
-        <div class="form-group row my-3 justify-content-between">
+        <div class="form-group row my-1 justify-content-between">
           {/* <StockNavBar updateStockList={setStockList} updateStockChartData={setStockChartDataAll} stockList={stockList} stockChartDataAll={stockChartDataAll}/> */}
           {/* <StockNavBar/> */}
           {/* {Object.keys(stockChartDataAll).length} */}
@@ -77,8 +75,8 @@ function App() {
             {/* <Route path="/" element={<StockList stockArray={stockList}/>}/> */}
             <Route path="/" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
             <Route path="/chart" element={<ChartScreen/>}/>
-            <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal}/>}/>
-            <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} />}/>
+            <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo}/>}/>
+            <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo}/>}/>
             <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal}/>}/>
             <Route path="/register" element={<RegistrationPage/>}/>
             {/* <Route path="/"/> */}

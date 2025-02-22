@@ -134,7 +134,7 @@ function Login({setToken, setActiveUser, setStockTokenGlobal}) {
                     Keep me signed in
                 </div>
 
-                <Button variant="primary" type="submit" className="login-button">
+                <Button variant="secondary" type="submit" className="login-button">
                     Login
                 </Button>
                 <div class="d-flex justify-content-center my-3">
