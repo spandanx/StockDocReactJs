@@ -11,14 +11,13 @@ import { MdRefresh } from "react-icons/md";
 
 import { useLocation } from 'react-router-dom';
 import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultUser } from '../common/Properties';
-//chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency
 
 import '../styles/PredictionSelection.css'
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal, activeUserInfo, chartFrequency, chartFromDate, chartToDate}) => {
+const ChartScreenDynamic = ({stock_name, stock_id, stockTokenGlobal, activeUserInfo, chartFrequency, chartFromDate, chartToDate, loadPrediction}) => {
 
 
   const [stockStockPromptScreenX, setStockStockPromptScreenX] = useState(100);
@@ -96,6 +95,7 @@ const [stockData, setStockData] = useState(
       if (location.state.stockTokenGlobal != null){
         setCurrentStockTokenGlobal(location.state.stockTokenGlobal);
       }
+      // chartFrequency: chartFreqSet[currentFreqSet].chartFrequency, chartFromDate :chartFreqSet[currentFreqSet].chartFromDate, chartToDate: chartFreqSet[currentFreqSet].chartToDate
       console.log("Location", currentStockName, currentStockId, currentStockTokenGlobal);
     }
     else{
@@ -206,6 +206,16 @@ const [stockData, setStockData] = useState(
     return ""
   }
 
+  const getCurrentStockChartInfo = () => {
+    // chartFrequency: chartFreqSet[currentFreqSet].chartFrequency, chartFromDate :chartFreqSet[currentFreqSet].chartFromDate, chartToDate: chartFreqSet[currentFreqSet].chartToDate
+    if (location.state?.chartFrequency != null && location.state?.chartFrequency != undefined){
+      return {chartFrequency: location.state.chartFrequency, chartFromDate: location.state.chartFromDate, chartToDate: location.state.chartToDate};
+    }
+    else {
+      return {chartFrequency: chartFrequency, chartFromDate: chartFromDate, chartToDate: chartToDate};
+    }
+  }
+
   const getCurrentStockName = () => {
     if (location.state?.stock_name != null && location.state?.stock_name != undefined){
       return location.state.stock_name;
@@ -222,8 +232,8 @@ const [stockData, setStockData] = useState(
   const getChartData = () => {
     // event.preventDefault();
     console.log("querying Stocks");
-    
-    let queryParams = {stock_id:getCurrentStockId(), frequency:chartFrequency, from_date:chartFromDate, to_date:chartToDate, user_id: (activeUserInfo && activeUserInfo.stock_username)? activeUserInfo.stock_username.trim() : "", oi: "1"}
+    let chartinfo = getCurrentStockChartInfo();
+    let queryParams = {stock_id:getCurrentStockId(), frequency:chartinfo.chartFrequency, from_date:chartinfo.chartFromDate, to_date:chartinfo.chartToDate, user_id: (activeUserInfo && activeUserInfo.stock_username)? activeUserInfo.stock_username.trim() : "", oi: "1"}
     var queryUrl = `${baseUrl}/chart/?stock_id=${queryParams.stock_id}&frequency=${queryParams.frequency}&from_date=${queryParams.from_date}&to_date=${queryParams.to_date}&user_id=${queryParams.user_id}&oi=${queryParams.oi}`
     console.log("url - ");
     console.log(queryUrl);
@@ -387,8 +397,8 @@ const [stockData, setStockData] = useState(
       <div class="row">
         {/* {console.log(getChartSize)} */}
         {/* chart.split(':')[1] */}
-        <p>Reload Chart <IoRefreshSharp onClick={(event) => getChartData(event)}/></p>
-        {predictionDropDown()}
+        {loadPrediction && <p>Reload Chart <IoRefreshSharp onClick={(event) => getChartData(event)}/></p>}
+        {loadPrediction && predictionDropDown()}
         {(stockData != null && stockData!= undefined && Object.keys(stockData).length>0)? 
         <Chart type='line' data={stockData} 
 

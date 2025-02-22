@@ -76,7 +76,7 @@ function App() {
             <Route path="/" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
             <Route path="/chart" element={<ChartScreen/>}/>
             <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo}/>}/>
-            <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo}/>}/>
+            <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} loadPrediction={true}/>}/>
             <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal}/>}/>
             <Route path="/register" element={<RegistrationPage/>}/>
             {/* <Route path="/"/> */}

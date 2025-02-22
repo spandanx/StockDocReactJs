@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../styles/StockList.css'
 import { IoRefreshSharp } from "react-icons/io5";
 import { RiShareForwardFill } from "react-icons/ri";
-import ChartScreenDynamic from "./ChartScreenDynamic"
+import ChartScreenDynamic from "./ChartScreenDynamic";
 import { useNavigate } from 'react-router-dom';
 import { formatDate, baseUrl } from '../common/Properties';
 // import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -179,7 +179,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
     console.log("Clicked navigate_to_stock_page");
     console.log(stock_name, stock_id, stockTokenGlobal);
-    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal, activeUserInfo: activeUserInfo}});
+    navigate('/dynamic-chart', {state: {stock_name: stock_name, stock_id: stock_id, stockTokenGlobal: stockTokenGlobal, activeUserInfo: activeUserInfo, chartFrequency: chartFreqSet[currentFreqSet].chartFrequency, chartFromDate :chartFreqSet[currentFreqSet].chartFromDate, chartToDate: chartFreqSet[currentFreqSet].chartToDate}});
   }
 
   const showStockList = () => {
@@ -212,7 +212,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
               {Object.entries(stock_col_native_mapping).map((row_, i_) => (
                 <td>{stockItem[row_[1]]}</td>
               ))}
-              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} chartFrequency={chartFreqSet[currentFreqSet].chartFrequency} chartFromDate={chartFreqSet[currentFreqSet].chartFromDate} chartToDate={chartFreqSet[currentFreqSet].chartToDate}/></td>
+              <td><ChartScreenDynamic stock_name={stockItem["symbol"]} stock_id={stockItem["instrument_token"]} stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} chartFrequency={chartFreqSet[currentFreqSet].chartFrequency} chartFromDate={chartFreqSet[currentFreqSet].chartFromDate} chartToDate={chartFreqSet[currentFreqSet].chartToDate} loadPrediction={false}/></td>
               <td><RiShareForwardFill onClick={(evnt)=>navigate_to_stock_page(stockItem["symbol"], stockItem["instrument_token"], stockTokenGlobal)}/></td>
             </tr>
             ))}
