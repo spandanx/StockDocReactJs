@@ -111,6 +111,11 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
 
   const [activeStockList, setActiveStockList] = useState([]);
   const [sortOnCol, setSortOnCol] = useState("");
+  
+  const [stockSelectMap, setStockSelectMap] = useState({});
+  const [stockSelectMapLength, setStockSelectMapLength] = useState(0);
+  const [stockSelectionToggle, setStockSelectionToggle] = useState(false);
+
 
   useEffect(() => {
     // getStockList();
@@ -187,6 +192,44 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
     }
   }
 
+  const invertStockSelection = () => {
+    console.log("Called invertSelection()");
+    console.log(activeStockList);
+    console.log(Object.keys(activeStockList).length);
+    
+    activeStockList.map((stockId, _index) => {
+      console.log(stockId.tradingsymbol_with_exchange);
+      updateStockSelectionMap(stockId.tradingsymbol_with_exchange);
+    });
+    setStockSelectionToggle(!stockSelectionToggle);
+
+  }
+
+  const clearStockSelection = () => {
+    console.log("Called clearStockSelection()");
+
+    setStockSelectMap({});
+    setStockSelectMapLength(0);
+  }
+
+  const updateStockSelectionMap = (stockId) => {
+    // stockSelectMap, setStockSelectMap, setStockSelectMapLength
+    // event.preventDefault();
+    console.log("Updating - " + stockId);
+    console.log(stockId);
+    let localStockMap = stockSelectMap;
+    if (stockId in localStockMap){
+      delete localStockMap[stockId];
+    }
+    else{
+      localStockMap[stockId] = "true";
+    }
+    setStockSelectMapLength(Object.keys(stockSelectMap).length);
+    setStockSelectMap(localStockMap);
+    console.log(localStockMap);
+
+  }
+
   const navigate_to_stock_page = (stock_name, stock_id, stockTokenGlobal) => {
     console.log("Clicked navigate_to_stock_page");
     console.log(stock_name, stock_id, stockTokenGlobal);
@@ -211,6 +254,8 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
         <table class="table table-light">
           <thead>
             <tr>
+              {/* {"Empty column for checkbox"} */}
+              <th scope="col">{}</th> 
             {Object.entries(stock_col_native_mapping).map((row_, i_) => (
               <th scope="col" onClick={(evnt)=>{sortStockList(row_[1], true)}}>{row_[0]}</th>
             ))}
@@ -220,6 +265,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
           <tbody>
             {activeStockList.map((stockItem)=>(
             <tr>
+              <th><input type="checkbox" checked={stockItem.tradingsymbol_with_exchange in stockSelectMap} onChange = {(event) => {updateStockSelectionMap(stockItem.tradingsymbol_with_exchange)}} /></th>
               {Object.entries(stock_col_native_mapping).map((row_, i_) => (
                 <td>{stockItem[row_[1]]}</td>
               ))}
@@ -357,7 +403,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
             {Object.keys(chartFreqSet).map((chartItem, idx) => (
               <li class="nav-item">
                 <a class={'nav-link' + (currentFreqSet==chartItem ? ' active' : '')} 
-                style={{color: (currentFreqSet==chartItem ? 'green' : 'grey'), textDecoration: (currentFreqSet==chartItem ? 'underline' : 'none')}}
+                style={{ cursor: 'pointer', color: (currentFreqSet==chartItem ? 'green' : 'grey'), textDecoration: (currentFreqSet==chartItem ? 'underline' : 'none')}}
                 onClick={()=>fetchCurrentFreqSet(chartItem)}>{chartItem}</a>
               </li>
             ))}
@@ -443,6 +489,22 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-link" href="#" id="refreshlist" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <a onClick={(event)=>getChartByType()}>Refresh List <IoRefreshSharp/></a>
+            </li>
+            <li class="nav-item">
+              
+            </li>
+            <li class="nav-item">
+              <a onClick={()=>invertStockSelection()} class="nav-link" href="#" id="selectiontoggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <input type="checkbox" checked={stockSelectionToggle}/> Toggle Selection
+              </a>
+            </li>
+            <li class="nav-item">
+              <a onClick={()=>clearStockSelection()} class="nav-link" href="#" id="selectiontoggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Clear All
+              </a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Quantity
@@ -487,10 +549,10 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
   return (
     <div class="col-md-auto">
       <div class="row">
-      <div class="col-md-3">
-      <a onClick={(event)=>getChartByType()}>HOLDING REFRESH <IoRefreshSharp/></a>
-      </div>
-      <div class="col-md-3">
+      {/* <div class="col-md-6">
+      
+      </div> */}
+      <div class="col-md-6">
         {filters()}
       </div>
       <div class="col-md-6">
