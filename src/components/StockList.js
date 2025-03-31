@@ -116,6 +116,9 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
   const [stockSelectMapLength, setStockSelectMapLength] = useState(0);
   const [stockSelectionToggle, setStockSelectionToggle] = useState(false);
 
+  const [alertPercentage, setAlertPercentage] = useState("");
+  const [gttPercentage, setGTTPercentage] = useState("");
+
 
   useEffect(() => {
     // getStockList();
@@ -484,6 +487,63 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
     setActiveStockList(filterStocksOnCondition(qty_item, amt_item));
   }
 
+  const alertsAndGTT = () => {
+    return <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Set Alerts
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li>
+                  <input
+                    class='dropdown-item'
+                    type='text'
+                    value={alertPercentage}
+                    className="form-control"
+                    placeholder={"Alert Percentage"}
+                    onChange={(event)=>setAlertPercentage(event.target.value)}
+                  />
+                </li>
+                <li>
+                  <button type="button" class="btn btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Set Alert
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Set GTT
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li>
+                  <input
+                    class='dropdown-item'
+                    type='text'
+                    value={gttPercentage}
+                    className="form-control"
+                    placeholder={"GTT Percentage"}
+                    onChange={(event)=>setGTTPercentage(event.target.value)}
+                  />
+                </li>
+                <li>
+                  <button type="button" class="btn btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Set GTT
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  }
+
   const filters = () => {
       return <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
@@ -552,10 +612,13 @@ const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
       {/* <div class="col-md-6">
       
       </div> */}
-      <div class="col-md-6">
+      <div class="col-md-5">
         {filters()}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-3">
+        {alertsAndGTT()}
+      </div>
+      <div class="col-md-4">
         {freqSet()}
       </div>
       </div>
