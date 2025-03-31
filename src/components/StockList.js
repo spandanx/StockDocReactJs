@@ -9,8 +9,8 @@ import '../styles/StockList.css'
 import { IoRefreshSharp } from "react-icons/io5";
 import { RiShareForwardFill } from "react-icons/ri";
 import ChartScreenDynamic from "./ChartScreenDynamic";
-import { useNavigate } from 'react-router-dom';
-import { formatDate, baseUrl } from '../common/Properties';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { formatDate, baseUrl, listType } from '../common/Properties';
 // import ButtonGroup from 'react-bootstrap/ButtonGroup';
 // import ToggleButton from 'react-bootstrap/ToggleButton';
 
@@ -21,52 +21,53 @@ import Navbar from 'react-bootstrap/Navbar';
 // import buysound from '../data/mixkit-clear-announce-tones-2861.wav'
 // import { getSuddenSell, getSuddenBuy, getHeavyBuy, getHeavySell, getSuddenPercentageHike, getSuddenPercentageFall } from '../utilities/UTIL';
 
-const StockList = ({stockTokenGlobal, activeUserInfo}) => {
+const StockList = ({stockTokenGlobal, activeUserInfo, givenListType}) => {
 
-  const [stockData, setStockData] = useState([
-    {
-      "tradingsymbol_with_exchange": "NSE_EQ_IRCON",
-      "quantity": 10,
-      "last_price": 170.19,
-      "average_price": 190.1,
-      "current_value": 10701.90,
-      "profit_and_loss": -201.05,
-      "net_change": -1.05,
-      "day_change": -5.37,
-      "symbol": "IRCON",
-      "exchange": "NSE",
-      "instrument_token": 1276417,
-      "total_price": 10718.91
-  },
-  {
-      "tradingsymbol_with_exchange": "BSE_EQ_RVNL",
-      "quantity": 10,
-      "last_price": 395.35,
-      "average_price": 403.02,
-      "current_value": 1620.93,
-      "profit_and_loss": -31.4,
-      "net_change": -0.78,
-      "day_change": 0,
-      "symbol": "RVNL",
-      "exchange": "BSE",
-      "instrument_token": 138918148,
-      "total_price": 1620.93
-  },
-  {
-      "tradingsymbol_with_exchange": "NSE_EQ_HUDCO",
-      "quantity": 16,
-      "last_price": 219.84,
-      "average_price": 203.25,
-      "current_value": 13517.44,
-      "profit_and_loss": 265.44,
-      "net_change": 1.31,
-      "day_change": -0.74,
-      "symbol": "HUDCO",
-      "exchange": "NSE",
-      "instrument_token": 5331201,
-      "total_price": 13517.44
-  }
-  ]);
+  const [stockData, setStockData] = useState([]);
+  //   const [stockData, setStockData] = useState([
+  //   {
+  //     "tradingsymbol_with_exchange": "NSE_EQ_IRCON",
+  //     "quantity": 10,
+  //     "last_price": 170.19,
+  //     "average_price": 190.1,
+  //     "current_value": 10701.90,
+  //     "profit_and_loss": -201.05,
+  //     "net_change": -1.05,
+  //     "day_change": -5.37,
+  //     "symbol": "IRCON",
+  //     "exchange": "NSE",
+  //     "instrument_token": 1276417,
+  //     "total_price": 10718.91
+  // },
+  // {
+  //     "tradingsymbol_with_exchange": "BSE_EQ_RVNL",
+  //     "quantity": 10,
+  //     "last_price": 395.35,
+  //     "average_price": 403.02,
+  //     "current_value": 1620.93,
+  //     "profit_and_loss": -31.4,
+  //     "net_change": -0.78,
+  //     "day_change": 0,
+  //     "symbol": "RVNL",
+  //     "exchange": "BSE",
+  //     "instrument_token": 138918148,
+  //     "total_price": 1620.93
+  // },
+  // {
+  //     "tradingsymbol_with_exchange": "NSE_EQ_HUDCO",
+  //     "quantity": 16,
+  //     "last_price": 219.84,
+  //     "average_price": 203.25,
+  //     "current_value": 13517.44,
+  //     "profit_and_loss": 265.44,
+  //     "net_change": 1.31,
+  //     "day_change": -0.74,
+  //     "symbol": "HUDCO",
+  //     "exchange": "NSE",
+  //     "instrument_token": 5331201,
+  //     "total_price": 13517.44
+  // }
+  // ]);
 
   const today = new Date()
   const oneDayAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate()-1);
@@ -80,8 +81,8 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
 
   const stockQtyFilter = ["Greater than 1"];
   const stockAmountFilter = ["Greater than 1k", "Greater than 10k", "Lesser than 10k"];
-  const [qtyFilter, setQtyFilter] = useState("");
-  const [amtFilter, setAmtFilter] = useState("");
+  const [qtyFilter, setQtyFilter] = useState("Greater than 1");
+  const [amtFilter, setAmtFilter] = useState("Greater than 1k");
   const chartFreqSet = {
     "1 Day": 
     {
@@ -106,15 +107,25 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   }
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeStockList, setActiveStockList] = useState([]);
   const [sortOnCol, setSortOnCol] = useState("");
 
   useEffect(() => {
     // getStockList();
-    console.log("Initiated");
-    setActiveStockList(stockData);
+    console.log("Initiated Stocklist");
+    // setActiveStockList(stockData);
+    // getHoldings();
+    // getChartByType();
   }, []);
+
+  useEffect(()=>{
+    console.log("Location pathname change Detected - Stocklist");
+    // loadSessionStorage();
+    getChartByType();
+  }, [location.pathname]);
+
 
   // const showStockList = () => {
   //   return (
@@ -226,7 +237,7 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
   }
   const getHoldings = () => {
     // event.preventDefault();
-    console.log("querying Stocks");
+    console.log("querying Stock holdings");
     
     var queryUrl = `${baseUrl}/holdings`
     console.log("url - ");
@@ -240,14 +251,95 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
           // setStocks(stocks);
           console.log("stocks - ");
           console.log(stocks);
-          console.log(stockData.length);
-          setStockData(stocks);
-          setActiveStockList(filterStocksOnCondition(qtyFilter, amtFilter));
+          console.log(stocks.length);
+          
+
+          if (Object.prototype.toString.call(stocks) === '[object Array]' && stocks !== null){
+            console.log("Found stocks");
+            setStockData([]);
+            setActiveStockList([]);
+
+            setStockData(stocks);
+            setActiveStockList(filterStocksOnCondition(stocks, qtyFilter, amtFilter));
+            console.log(activeStockList.length);
+          }
+          else{
+            console.log("Stocks not found!");
+          }
           // setActiveStockList(stocks);
           console.log(stockData.length);
           // console.log(getStockArrayToObject(stocks));
         });
     }
+
+    const getPositions = () => {
+      // event.preventDefault();
+      console.log("querying Stock Positions");
+      
+      var queryUrl = `${baseUrl}/positions`
+      console.log("url - ");
+      console.log(queryUrl);
+      fetch(queryUrl, {
+          method: 'get',
+          headers: {'stock_authorization': stockTokenGlobal},
+          })
+          .then(response => response.json())
+          .then(stocks => {
+            // setStocks(stocks);
+            console.log("stocks - ");
+            console.log(stocks);
+            console.log(stockData.length);
+
+            if (Object.prototype.toString.call(stocks) === '[object Array]' && stocks !== null){
+              console.log("Found stocks");
+              setStockData([]);
+              setActiveStockList([]);
+              
+              // setStockData(stocks);
+              setActiveStockList(filterStocksOnCondition(stocks, qtyFilter, amtFilter));
+              console.log(activeStockList.length);
+            }
+            else{
+              console.log("Stocks not found!");
+            }
+            // setActiveStockList(stocks);
+            console.log(stockData.length);
+            // console.log(getStockArrayToObject(stocks));
+          });
+      }
+      const getMergedStocks = () => {
+        // event.preventDefault();
+        console.log("querying merged stocks");
+        
+        var queryUrl = `${baseUrl}/merged-stocks`
+        console.log("url - ");
+        console.log(queryUrl);
+        fetch(queryUrl, {
+            method: 'get',
+            headers: {'stock_authorization': stockTokenGlobal},
+            })
+            .then(response => response.json())
+            .then(stocks => {
+              // setStocks(stocks);
+              console.log("stocks - ");
+              console.log(stocks);
+              console.log(stockData.length);
+              if (Object.prototype.toString.call(stocks) === '[object Array]' && stocks !== null){
+                console.log("Found stocks");
+                // setStockData([]);
+                setActiveStockList([]);
+
+                setStockData(stocks);
+                setActiveStockList(filterStocksOnCondition(stocks, qtyFilter, amtFilter));
+                console.log(activeStockList.length);
+              }
+              else{
+                console.log("Stocks not found!");
+              }
+              // setActiveStockList(stocks);
+              // console.log(getStockArrayToObject(stocks));
+            });
+        }
   
   const fetchCurrentFreqSet = (chartItem) => {
     setCurrentFreqSet(chartItem);
@@ -275,41 +367,52 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
     </nav>
   }
 
-  const filterStocksOnCondition = (qty_item, amt_item) => {
-    console.log(qty_item, amt_item);
+  const filterStocksOnCondition = (stocks, qty_item, amt_item) => {
+    // console.log(qty_item, amt_item);
+
+    // console.log(Object.prototype.toString.call(variable) === '[object Array]');
+    // var arr1 = [
+    //   {"name": "abc", "cde": "abd"}
+    // ]
+    // console.log(Object.prototype.toString.call(arr1));
+
+    // var obj1 = {"name": "abc", "cde": "abd"};
+    // console.log(Object.prototype.toString.call(obj1));
     
-    let filteredStocks = stockData.filter((stockItem) => {
+    // if (stockData.length == 0)
+    
+    let filteredStocks = stocks.filter((stockItem) => {
       console.log(stockItem);
       let eligible = true;
       if (qty_item == "Greater than 1"){
         eligible = eligible & (stockItem.quantity > 1) ? true: false;
-        console.log("Greater than 1", eligible);
+        // console.log("Greater than 1", eligible);
       }
       else{
         eligible = eligible & true;
-        console.log("QTY Else", eligible);
+        // console.log("QTY Else", eligible);
       }
       //"Greater than 10k", "Lesser than 10k"
       if (amt_item == "Greater than 1k"){
         eligible = eligible & (stockItem.total_price > 1000) ? true: false;
-        console.log("Greater than 1k", eligible);
+        // console.log("Greater than 1k", eligible);
       }
       else if (amt_item == "Greater than 10k"){
         eligible = eligible & (stockItem.total_price > 10000) ? true: false;
-        console.log("Greater than 10k", eligible);
+        // console.log("Greater than 10k", eligible);
       }
       else if (amt_item == "Lesser than 10k"){
         eligible = eligible & (stockItem.total_price <= 10000) ? true: false;
-        console.log("Lesser than 10k", eligible);
+        // console.log("Lesser than 10k", eligible);
       }
       else {
         eligible = eligible & true;
-        console.log("Amt Else", eligible);
+        // console.log("Amt Else", eligible);
       }
       return eligible;
     });
-    console.log("filteredStocks");
-    console.log(filteredStocks);
+    // console.log("filteredStocks");
+    // console.log(filteredStocks);
     return filteredStocks;
   }
 
@@ -366,12 +469,26 @@ const StockList = ({stockTokenGlobal, activeUserInfo}) => {
       </div>
     </nav>
   }
+  const getChartByType = () => {
+    if (givenListType == listType.HOLDINGS){
+      console.log("Fetching Holdings");
+      getHoldings();
+    }
+    else if (givenListType == listType.POSITIONS){
+      console.log("Fetching Positions");
+      getPositions();
+    }
+    else if (givenListType == listType.MERGED){
+      console.log("Fetching Merged Stocks");
+      getMergedStocks();
+    }
+  }
 
   return (
     <div class="col-md-auto">
       <div class="row">
       <div class="col-md-3">
-      <a onClick={(event)=>getHoldings()}>HOLDING REFRESH <IoRefreshSharp/></a>
+      <a onClick={(event)=>getChartByType()}>HOLDING REFRESH <IoRefreshSharp/></a>
       </div>
       <div class="col-md-3">
         {filters()}

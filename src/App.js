@@ -14,6 +14,8 @@ import {ToastContainer, toast } from 'react-toastify';
 import Login from './components/Login/LoginPage';
 import RegistrationPage from './components/Login/RegisterPage';
 
+import {listType} from './common/Properties';
+
 
 import {
   BrowserRouter as Router,
@@ -22,6 +24,7 @@ import {
   Link
 } from "react-router-dom";
 import ChartScreenDynamic from './components/ChartScreenDynamic';
+
 
 
 function App() {
@@ -61,6 +64,12 @@ function App() {
               <Nav.Link as={Link} to="/holdings">
                 Holdings
               </Nav.Link>
+              <Nav.Link as={Link} to="/positions">
+                Positions
+              </Nav.Link>
+              <Nav.Link as={Link} to="/merged-stocks">
+                Merged Stocks
+              </Nav.Link>
             </Nav>
           </Container>
         </Navbar>
@@ -75,7 +84,9 @@ function App() {
             {/* <Route path="/" element={<StockList stockArray={stockList}/>}/> */}
             <Route path="/" element={<Login setToken={setToken} setActiveUser={setActiveUser}/>}/>
             <Route path="/chart" element={<ChartScreen/>}/>
-            <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo}/>}/>
+            <Route path="/holdings" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} givenListType={listType.HOLDINGS}/>}/>
+            <Route path="/positions" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} givenListType={listType.POSITIONS}/>}/>
+            <Route path="/merged-stocks" element={<StockList stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} givenListType={listType.MERGED}/>}/>
             <Route path="/dynamic-chart" element={<ChartScreenDynamic stockTokenGlobal={stockTokenGlobal} activeUserInfo={activeUserInfo} loadPrediction={true}/>}/>
             <Route path="/login" element={<Login setToken={setToken} setActiveUser={setActiveUser} setStockTokenGlobal={setStockTokenGlobal}/>}/>
             <Route path="/register" element={<RegistrationPage/>}/>

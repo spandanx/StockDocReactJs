@@ -10,7 +10,7 @@ import { RiSettings4Fill } from "react-icons/ri";
 import { MdRefresh } from "react-icons/md";
 
 import { useLocation } from 'react-router-dom';
-import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultUser } from '../common/Properties';
+import { baseUrl, sftpBaseLocation, predictionFileListEndpoint, predictionEndpoint, chartDefaultUser, stockRefreshFrequency } from '../common/Properties';
 
 import '../styles/PredictionSelection.css'
 // import sellsound from '../data/mixkit-bell-notification-933.wav'
@@ -110,8 +110,18 @@ const [stockData, setStockData] = useState(
     getChartData();
   }, []);
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('Refresh every 2 minutes ', getCurrentStockName());
+      getChartData();
+    }, stockRefreshFrequency);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, []);
+
   const convertDataToChartWithPrediction = (stockData, predictionData) => {
-    console.log("Called convertDataToChartWithPrediction()");
+    // console.log("Called convertDataToChartWithPrediction()");
     // console.log("StockData");
     // console.log(stockData);
     // console.log("predictionData");
@@ -141,8 +151,8 @@ const [stockData, setStockData] = useState(
       }
     ]
     }
-    console.log("chart_data_with_prediction");
-    console.log(chart_data_with_prediction);
+    // console.log("chart_data_with_prediction");
+    // console.log(chart_data_with_prediction);
     return chart_data_with_prediction;
   }
 

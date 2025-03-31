@@ -3,6 +3,7 @@ import CryptoJS from "crypto-js";
 const salt = "asjajaj00aanansAm44";
 const sftpBaseLocation = "/home/gamma/stockdoc/"
 const baseUrl = "http://localhost:8002"
+// const baseUrl = "http://80.188.226.161:8002"
 const predictionFileListEndpoint = baseUrl + "/list-prediction-files";
 const predictionEndpoint = baseUrl + '/prediction';
 const loginUrl = baseUrl + "/token/"
@@ -10,6 +11,8 @@ const registerUrl = baseUrl + "/users/register/"
 const healthCheckUrl = baseUrl + "/healthcheck/"
 const updateStockTokenUrl = baseUrl + "/users/update-stock-token/"
 const accountInfoUrl = baseUrl + "/users/self-info/"
+
+const stockRefreshFrequency = 120000;
 
 function formatDate(date) {
     var d = new Date(date),
@@ -33,6 +36,11 @@ const startDate = new Date(today.getFullYear(), today.getMonth() - 6, today.getD
 const chartDefaultFromDate = formatDate(startDate);
 const chartDefaultToDate = formatDate(today);
 console.log(chartDefaultFromDate, chartDefaultToDate);
+const listType = {
+    HOLDINGS: "HOLDINGS",
+    POSITIONS: 'POSITIONS',
+    MERGED: 'MERGED'
+  };
 
 //"2024-11-25"
 
@@ -95,5 +103,6 @@ const loadSessionStorage = async (username, accountInfoUrl, setStockTokenGlobal,
   }
 
 export {encryptData, decryptData, sftpBaseLocation, baseUrl, predictionFileListEndpoint, predictionEndpoint, chartDefaultFromDate, chartDefaultToDate, chartDefaultFrequency,
-    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo, formatDate
+    loginUrl, registerUrl, healthCheckUrl, updateStockTokenUrl, accountInfoUrl, loadSessionStorage, getAccountInfo, formatDate, stockRefreshFrequency,
+    listType
 };
